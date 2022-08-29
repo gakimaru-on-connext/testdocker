@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>Docker</short>
+  <description>Natively managed Docker Engines services.</description>
+  <port port="2375" protocol="tcp"/>
+  <port port="2376" protocol="tcp"/>
+</service>

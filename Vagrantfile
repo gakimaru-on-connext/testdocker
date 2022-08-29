@@ -44,7 +44,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 443, host: 40443
   config.vm.network "forwarded_port", guest: 6379, host: 46379
   config.vm.network "forwarded_port", guest: 3306, host: 43306, host_ip: "127.0.0.1", auto_correct: true
-  config.vm.network "forwarded_port", guest: 2375, host: 43306, host_ip: "127.0.0.1", auto_correct: true
+  config.vm.network "forwarded_port", guest: 2376, host: 42376, host_ip: "127.0.0.1", auto_correct: true
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -77,12 +77,13 @@ Vagrant.configure("2") do |config|
   #
   # View the documentation for the provider you are using for more
   # information on available options.
-  config.vm.provider :virtualbox do |virtualbox|
-    virtualbox.name = "testdocker"
-    virtualbox.memory = "4096"
-    virtualbox.cpus = 4
-    virtualbox.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
-    virtualbox.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  config.vm.provider :virtualbox do |vb|
+    vb.name = "testdocker"
+    vb.gui = false
+    vb.memory = "4096"
+    vb.cpus = 4
+    vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     #ボリューム変更方法
     # $ vagrant ssh
     # $ sudo pvdisplay  ... LVMの Phigical Volume 確認
@@ -103,12 +104,20 @@ Vagrant.configure("2") do |config|
     run: "once" do |s|
       s.inline = <<-SHELL
         echo once
+        hostname testdocker.localdomain
         dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
         dnf -y update
         dnf -y install docker-ce --allowerasing
         systemctl enable docker
+        #sed -i -e 's/-H fd:\/\/ --containerd/-H fd:\/\/ --tlsverify --tlscacert=\/vagrant\/docker\/ca\/ca.pem --tlscert=\/vagrant\/docker\/ca\/server-cert.pem --tlskey=\/vagrant\/docker\/ca\/server-key.pem -H tcp:\/\/0.0.0.0:2376 --containerd/' /usr/lib/systemd/system/docker.service
+        sed -i -e 's,-H fd:// --containerd,-H fd:// --tlsverify --tlscacert=/vagrant/docker/ca/ca.pem --tlscert=/vagrant/docker/ca/server-cert.pem --tlskey=/vagrant/docker/ca/server-key.pem -H tcp://0.0.0.0:2376 --containerd,' /usr/lib/systemd/system/docker.service
+        systemctl daemon-reload
         systemctl start docker
         usermod -aG docker vagrant
+        #cp /vagrant/docker/fw/docker.xml /usr/lib/firewalld/services/.
+        firewall-cmd --add-port=2376/tcp --permanent
+        #firewall-cmd --add-port=2375/tcp --permanent
+        firewall-cmd --reload
       SHELL
     end
   #config.vm.provision "setup", privileged: true, type: "shell",
