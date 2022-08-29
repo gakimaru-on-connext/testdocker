@@ -103,29 +103,38 @@ Vagrant.configure("2") do |config|
   config.vm.provision :setup, privileged: true, type: "shell",
     run: "once" do |s|
       s.inline = <<-SHELL
-        echo once
-        hostname -b testdocker.localdomain
+        echo setup
+        #hostname -b testdocker.localdomain
+        hostnamectl set-hostname testdocker.localdomain
         dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
         dnf -y update
         dnf -y install docker-ce --allowerasing
-        systemctl enable docker
+        usermod -aG docker vagrant
         #sed -i -e 's/-H fd:\/\/ --containerd/-H fd:\/\/ --tlsverify --tlscacert=\/vagrant\/docker\/ca\/ca.pem --tlscert=\/vagrant\/docker\/ca\/server-cert.pem --tlskey=\/vagrant\/docker\/ca\/server-key.pem -H tcp:\/\/0.0.0.0:2376 --containerd/' /usr/lib/systemd/system/docker.service
         sed -i -e 's,-H fd:// --containerd,-H fd:// --tlsverify --tlscacert=/vagrant/docker/ca/ca.pem --tlscert=/vagrant/docker/ca/server-cert.pem --tlskey=/vagrant/docker/ca/server-key.pem -H tcp://0.0.0.0:2376 --containerd,' /usr/lib/systemd/system/docker.service
-        systemctl daemon-reload
-        systemctl start docker
-        usermod -aG docker vagrant
         #cp /vagrant/docker/fw/docker.xml /usr/lib/firewalld/services/.
         firewall-cmd --add-port=2376/tcp --permanent
         #firewall-cmd --add-port=2375/tcp --permanent
         firewall-cmd --reload
+        systemctl daemon-reload
+        systemctl stop docker
+        systemctl start docker
+        systemctl enable docker
       SHELL
     end
-  #config.vm.provision "setup", privileged: true, type: "shell",
-  #  run: "always" do |s| 
-  #    s.inline = <<-SHELL
-  #      echo always
-  #    SHELL
-  #  end
+  config.vm.provision :wait, privileged: true, type: "shell",
+    run: "always" do |s|
+      s.inline = <<-SHELL
+        echo wait for start docker
+        for ((i=0; i < 10; i++)); do if [ -f /vagrant/docker/ca/server-cert.pem -a -f /vagrant/docker/ca/server-key.pem -a -f /vagrant/docker/docker-compose.yml ]; then break; fi; sleep 1; done
+        sleep 1
+        #cat /vagrant/docker/ca/server-cert.pem
+        #cat /vagrant/docker/ca/server-key.pem
+        #cat /vagrant/docker/docker-compose.yml
+        systemctl start docker
+        systemctl status docker
+      SHELL
+    end
   config.vm.provision :docker
   config.vm.provision :docker_compose, yml: "/vagrant/docker/docker-compose.yml", run: "always"
 end
