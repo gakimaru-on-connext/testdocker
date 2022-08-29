@@ -104,7 +104,7 @@ Vagrant.configure("2") do |config|
     run: "once" do |s|
       s.inline = <<-SHELL
         echo once
-        hostname testdocker.localdomain
+        hostname -b testdocker.localdomain
         dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
         dnf -y update
         dnf -y install docker-ce --allowerasing
