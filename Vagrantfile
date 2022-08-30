@@ -63,6 +63,7 @@ Vagrant.configure("2") do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
   config.vm.synced_folder "./docker", "/vagrant/docker", type: "rsync"
+  config.vm.synced_folder "./setup/config", "/vagrant/setup/config", type: "rsync"
   #config.vm.synced_folder "./share", "/vagrant/share"
   config.vm.synced_folder "/System/Volumes/Data" + File.expand_path("./share"), "/vagrant/share", type: "nfs", nfs_export: true, nfs_udp: false, nfs_version: 3
 
@@ -106,6 +107,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, privileged: true, path: "./setup/setup-os.sh", reboot: true
   config.vm.provision :shell, privileged: true, path: "./setup/setup-mariadb.sh"
   config.vm.provision :shell, privileged: true, path: "./setup/setup-postgresql.sh"
+  config.vm.provision :shell, privileged: true, path: "./setup/setup-mongodb.sh"
   config.vm.provision :shell, privileged: true, path: "./setup/setup-docker.sh"
   config.vm.provision :docker
   config.vm.provision :reload

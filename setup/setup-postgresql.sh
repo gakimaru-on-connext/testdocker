@@ -46,5 +46,7 @@ firewall-cmd --add-port=5432/tcp --permanent
 firewall-cmd --reload
 
 # client
+# $ brew install libpq
+# $ echo 'export PATH=$PATH:/usr/local/opt/libpq/bin' >> ~/.zshrc
 # $ psql -U admin -h 192.168.56.10 -d admin
 # $ psql 'postgres://admin:hogehoge@192.168.56.10:5432/admin?sslmode=disable'
