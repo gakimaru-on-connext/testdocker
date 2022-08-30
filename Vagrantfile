@@ -10,6 +10,7 @@ install_plugin('vagrant-hostmanager')
 install_plugin('sahara')
 install_plugin('vagrant-vbox-snapshot')
 install_plugin('vagrant-docker-compose')
+install_plugin('vagrant-reload')
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -61,7 +62,9 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
-  config.vm.synced_folder "./", "/vagrant"
+  config.vm.synced_folder "./docker", "/vagrant/docker", type: "rsync"
+  #config.vm.synced_folder "./share", "/vagrant/share"
+  config.vm.synced_folder "/System/Volumes/Data" + File.expand_path("./share"), "/vagrant/share", type: "nfs", nfs_export: true, nfs_udp: false, nfs_version: 3
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -100,8 +103,11 @@ Vagrant.configure("2") do |config|
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
-  config.vm.provision :shell, privileged: true, path: "./setup/setup.sh", reboot: true
+  config.vm.provision :shell, privileged: true, path: "./setup/setup-os.sh", reboot: true
+  config.vm.provision :shell, privileged: true, path: "./setup/setup-mariadb.sh"
+  config.vm.provision :shell, privileged: true, path: "./setup/setup-postgresql.sh"
+  config.vm.provision :shell, privileged: true, path: "./setup/setup-docker.sh"
   config.vm.provision :docker
-  config.vm.provision :shell, path: "./setup/wait.sh", run: "always"
+  config.vm.provision :reload
   config.vm.provision :docker_compose, yml: "/vagrant/docker/docker-compose.yml", run: "always"
 end
