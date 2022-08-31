@@ -1,0 +1,109 @@
+---
+- include_vars: vars.yml
+
+#------------------------------------------------------------
+# RedHat 9 or clone Block
+- name: setup_os_base_redhat9
+  when: ansible_distribution_file_variety == 'RedHat'
+    and ansible_distribution_major_version == '9'
+  become: true
+  become_user: "{{ become_super_user }}"
+  #ignore_errors: true
+  block:
+
+    #------------------------------------------------------------
+    - name: add_epel_repository_block
+      when: with_epel_repository is defined
+        and with_epel_repository == true
+      block:
+
+        #------------------------------------------------------------
+        - name: add_epel_repository
+          ansible.builtin.dnf:
+            name: epel-release
+            state: present
+            enablerepo: epel-release
+
+    #------------------------------------------------------------
+    - name: add_remi_repository_block
+      when: with_remi_repository is defined
+        and with_remi_repository == true
+      block:
+
+        - name: install_rpm_key_centos
+          rpm_key:
+            key: https://rpms.remirepo.net/RPM-GPG-KEY-remi
+
+        #------------------------------------------------------------
+        - name: add_remi_repository
+          ansible.builtin.dnf:
+            name: https://rpms.remirepo.net/enterprise/remi-release-9.rpm
+            state: present
+            enablerepo: remi
+
+    #------------------------------------------------------------
+    - name: upgrade_all_packages
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+
+    #------------------------------------------------------------
+    - name: install_basic_packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - expect
+
+    #------------------------------------------------------------
+    - name: install_language_packages
+      ansible.builtin.dnf:
+        name: "{{ lang_package }}"
+        state: latest
+      when: lang_package is defined
+        and lang_package != ''
+
+#------------------------------------------------------------
+# Common Block
+- name: setup_os_base_common
+  become: true
+  become_user: "{{ become_super_user }}"
+  #ignore_errors: true
+  block:
+
+    #------------------------------------------------------------
+    - name: set_hostname
+      hostname: 
+        name: "{{ host_name }}"
+      when: host_name is defined
+        and host_name != ''
+
+    #------------------------------------------------------------
+    - name: set_locale
+      shell: "localectl set-locale LANG={{ os_locale }}"
+      #locale_gen:
+      #  name: "{{ os_locale }}"
+      #  state: present
+      when: locale is defined
+        and locale != ''
+
+    #------------------------------------------------------------
+    - name: set_timezone
+      community.general.timezone:
+        name: "{{ os_timezone }}"
+
+    #------------------------------------------------------------
+    - name: set_pam_limits
+      pam_limits:
+        domain: "{{ item.domain }}"
+        limit_type: "{{ item.limit_type }}"
+        limit_item: "{{ item.limit_item }}"
+        value: "{{ item.value }}"
+      with_items:
+        - domain: "*"
+          limit_type: "-"
+          limit_item: "nofile"
+          value: "{{ os_limit_nofile }}"
+
+#------------------------------------------------------------
+# EOF

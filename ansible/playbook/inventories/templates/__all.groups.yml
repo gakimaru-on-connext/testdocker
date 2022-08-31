@@ -1,0 +1,87 @@
+    #--------------------
+    # 系統別ホストグループ
+    #--------------------
+    # 全Webフロントエンド
+    front_all:
+      children:
+        front_hosts:
+      vars:
+        is_front: true
+    # 全WebAPI
+    api_all:
+      children:
+        api_hosts:
+      vars:
+        is_api: true
+    # 全Web
+    web_all:
+      children:
+        front_all:
+        api_all:
+      vars:
+        is_web: true
+    # 全RDB
+    rdb_all:
+      children:
+        rdb_master_hosts:
+        rdb_slave_hosts:
+      vars:
+        is_rdb: true
+    # 全ドキュメントDB
+    ddb_all:
+      children:
+        ddb_master_hosts:
+        ddb_replica_hosts:
+      vars:
+        is_ddb: true
+    # 全DB
+    db_all:
+      children:
+        rdb_all:
+        ddb_all:
+      vars:
+        is_db: true
+    # 全キャッシュ
+    cache_all:
+      children:
+        cache_master_hosts:
+        cache_replica_hosts:
+      vars:
+        is_cache: true
+    # 全ホスト
+    hosts_all:
+      children:
+        web_all:
+        db_all:
+        cache_all:
+    #--------------------
+    # パッケージ別ホストグループ
+    #--------------------
+    # Docker
+    docker:
+      children:
+        hosts_all:
+      vars:
+        is_docker: true
+    # Ngginx
+    nginx:
+      children:
+        web_all:
+      vars:
+        is_nginx: true
+    # MariaDB
+    mariadb:
+      children:
+        rdb_all:
+    # PostgreSQL
+    pstgresql:
+      children:
+        rdb_all:
+    # MongoDB
+    mongodb:
+      children:
+        ddb_all:
+    # Redis用
+    redis:
+      children:
+        cache_all:
