@@ -93,7 +93,7 @@
       vars:
         is_mariadb: true
     # PostgreSQL
-    pstgresql:
+    postgresql:
       children:
         rdb_all:
       vars:

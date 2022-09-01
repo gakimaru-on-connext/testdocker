@@ -4,8 +4,8 @@
 #------------------------------------------------------------
 # RedHat 9 or clone Block
 - name: setup_os_base_redhat9
-  when: ansible_distribution_file_variety == 'RedHat'
-    and ansible_distribution_major_version == '9'
+  when: ansible_distribution_file_variety == "RedHat"
+    and ansible_distribution_major_version == "9"
   become: true
   become_user: "{{ become_super_user }}"
   #ignore_errors: true
@@ -30,14 +30,15 @@
         and with_remi_repository == true
       block:
 
-        - name: install_rpm_key_centos
-          rpm_key:
-            key: https://rpms.remirepo.net/RPM-GPG-KEY-remi
+        - name: install_rpm_key_for_remi_repository
+          ansible.builtin.rpm_key:
+            key: https://rpms.remirepo.net/RPM-GPG-KEY-remi2021
+            state: present
 
         #------------------------------------------------------------
         - name: add_remi_repository
           ansible.builtin.dnf:
-            name: https://rpms.remirepo.net/enterprise/remi-release-9.rpm
+            name: https://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm
             state: present
             enablerepo: remi
 
@@ -84,13 +85,15 @@
       #locale_gen:
       #  name: "{{ os_locale }}"
       #  state: present
-      when: locale is defined
-        and locale != ''
+      when: os_locale is defined
+        and os_locale != ''
 
     #------------------------------------------------------------
     - name: set_timezone
       community.general.timezone:
         name: "{{ os_timezone }}"
+      when: os_timezone is defined
+        and os_timezone != ''
 
     #------------------------------------------------------------
     - name: set_pam_limits
