@@ -109,3 +109,6 @@
         dest: "{{ proj_user_home }}/.bashrc"
         insertafter: EOF
         line: "source ~/.bashrc.ext"
+
+#------------------------------------------------------------
+# EOF
