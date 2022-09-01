@@ -1,0 +1,130 @@
+---
+
+#------------------------------------------------------------
+# RedHat 9 type on super-user block
+- name: setup_mariadb_server_on_redhat9_by_super_user
+  when: ansible_distribution_file_variety == "RedHat"
+    and ansible_distribution_major_version == "9"
+  become: true
+  become_user: "{{ become_super_user }}"
+  #ignore_errors: true
+  block:
+
+    #------------------------------------------------------------
+    - name: install_mariadb_server
+      dnf:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - mariadb-server
+        - python3
+        - python3-pip
+        #- python3-devel
+        #- gcc
+
+    #----------------------------------------------------------
+    - name: install_pip_for_mariadb_server
+      pip:
+        name:
+          - PyMySQL
+        state: present
+        executable: pip3
+
+    #----------------------------------------------------------
+    - name: start_mariadb_server
+      systemd:
+        name: mariadb
+        state: started
+        #daemon_reload: true
+        enabled: true
+
+#------------------------------------------------------------
+# Super-user block
+- name: setup_mariadb_server_by_super_user
+  become: true
+  become_user: "{{ become_super_user }}"
+  #ignore_errors: true
+  block:
+
+    #----------------------------------------------------------
+    # ※ mysql_user: の check_implicit_admin がなぜかうまくいかないため、既存の root@localhost は直接パスワード変更
+    - name: change_root_localhost_user_password
+      shell: "mysql -u {{ mariadb_root_user }} mysql -e'SET PASSWORD FOR \"{{ mariadb_root_user }}\"@\"{{ item }}\" = PASSWORD(\"{{ mariadb_root_password }}\");'"
+      ignore_errors: true
+      with_items:
+        - localhost
+
+    #----------------------------------------------------------
+    - name: setup_root_user
+      mysql_user:
+        login_user: "{{ mariadb_root_user }}"
+        login_password: "{{ mariadb_root_password }}"
+        #check_implicit_admin: true
+        name: "{{ mariadb_root_user }}"
+        password: "{{ mariadb_root_password }}"
+        host: "{{ item }}"
+        priv: "*.*:ALL,GRANT"
+        state: present
+      with_items:
+        #- localhost
+        - 127.0.0.1
+        - ::1
+        - "{{ mariadb_root_host }}"
+
+    #----------------------------------------------------------
+    - name: delete_anonymous_user
+      mysql_user:
+        login_user: "{{ mariadb_root_user }}"
+        login_password: "{{ mariadb_root_password }}"
+        #check_implicit_admin: true
+        name: ''
+        host_all: true
+        state: absent
+
+    #----------------------------------------------------------
+    - name: setup_default_character_set_for_client
+      lineinfile:
+        #path: /etc/mysql/conf.d/mysql.cnf
+        dest: /etc/my.cnf.d/client.cnf
+        #insertafter: '\[mysqld\]'
+        insertafter: '\[client-mariadb\]'
+        line: 'default-character-set={{ mariadb_character_set }}'
+      notify: restart_mariadb_server
+
+    #----------------------------------------------------------
+    - name: setup_character_set_server
+      lineinfile:
+        #dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+        dest: /etc/my.cnf.d/mariadb-server.cnf
+        insertafter: '\[mysqld\]'
+        line: "character-set-server={{ mariadb_character_set }}"
+      notify: restart_mariadb_server
+
+    #------------------------------------------------------------
+    - name: setup_firewalld_for_mariadb
+      firewalld:
+        port: 3306/tcp
+        permanent: true
+        immediate: true
+        state: enabled
+
+#------------------------------------------------------------
+# RedHat 9 type on super-user block
+- name: setup_mariadb_server_on_redhat9_by_super_user_2
+  when: ansible_distribution_file_variety == "RedHat"
+    and ansible_distribution_major_version == "9"
+  become: true
+  become_user: "{{ become_super_user }}"
+  #ignore_errors: true
+  block:
+
+    #----------------------------------------------------------
+    - name: restart_mariadb_server
+      systemd:
+        name: mariadb
+        state: restarted
+        #daemon_reload: true
+        enabled: true
+
+#------------------------------------------------------------
+# EOF

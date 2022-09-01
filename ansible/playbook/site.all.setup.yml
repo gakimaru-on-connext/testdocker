@@ -5,4 +5,5 @@
 - import_playbook: playbook.postgresql.setup.yml
 - import_playbook: playbook.mongodb.setup.yml
 - import_playbook: playbook.redis.setup.yml
+- import_playbook: playbook.nginx.setup.yml
 - import_playbook: playbook.docker.setup.yml

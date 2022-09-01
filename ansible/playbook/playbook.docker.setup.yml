@@ -1,5 +1,6 @@
 ---
 - hosts: docker
+  gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
   roles:
@@ -11,6 +12,7 @@
         and is_container is defined
         and is_container == true
 - hosts: docker_swarm
+  gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
   roles:
@@ -22,6 +24,7 @@
         and is_container_orchestration_server is defined
         and is_container_orchestration_server == true
 - hosts: all
+  gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
   roles:

@@ -1,8 +1,8 @@
 ---
 
 #------------------------------------------------------------
-# Common Block
-- name: setup_os_user_common
+# Super-user block
+- name: setup_os_user_by_super_user
   become: true
   become_user: "{{ become_super_user }}"
   #ignore_errors: true
@@ -46,7 +46,7 @@
         owner: "{{ proj_user }}"
         group: "{{ proj_group }}"
         mode: "u+rwX,go-rwx"
-        recurse: yes
+        recurse: true
       with_items:
         - "{{ proj_user_home }}/.ansible"
         - "{{ proj_user_home }}/.cache"
@@ -60,11 +60,11 @@
         owner: "{{ proj_user }}"
         group: "{{ proj_group }}"
         mode: 0600
-        create: yes
+        create: true
         state: present
 
     #------------------------------------------------------------
-    # AuthorizedKeys Block
+    # AuthorizedKeys block
     - name: setup_project_user_authorized_keys
       when: proj_user_with_authorized_keys is defined
         and proj_user_with_authorized_keys == true
@@ -75,7 +75,7 @@
           authorized_key:
             user: "{{ proj_user }}"
             state: present
-            #exclusive: yes
+            #exclusive: true
             key: "{{ lookup('pipe', 'cat {{ role_path }}/authorized_keys/add/*.pub') }}"
 
         #------------------------------------------------------------

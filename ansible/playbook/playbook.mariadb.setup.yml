@@ -1,5 +1,6 @@
 ---
 - hosts: mariadb
+  gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
   roles:
@@ -7,12 +8,13 @@
       when: setup_rdb is defined
         and setup_rdb == true
         and setup_mariadb_server is defined
-        and mariadb_server == true
+        and setup_mariadb_server == true
         and is_rdb_server is defined
         and is_rdb_server == true
         and is_mariadb is defined
         and is_mariadb == true
 - hosts: all
+  gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
   roles:
@@ -20,6 +22,6 @@
       when: setup_rdb is defined
         and setup_rdb == true
         and setup_mariadb_client is defined
-        and mariadb_client == true
+        and setup_mariadb_client == true
         and is_rdb_client is defined
-        and is_rdb_client == false
+        and is_rdb_client == true

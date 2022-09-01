@@ -411,6 +411,8 @@ all:
     setup_mariadb_client: true
     mariadb_root_user: root
     mariadb_root_password: hogehoge
+    mariadb_root_host: 192.168.56.%
+    mariadb_character_set: utf8mb4
     #--------------------
     # パッケージ：RDB：PostgreSQL設定
     #--------------------

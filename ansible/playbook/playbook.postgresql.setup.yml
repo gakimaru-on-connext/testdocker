@@ -1,5 +1,6 @@
 ---
 - hosts: postgresql
+  gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
   roles:
@@ -13,6 +14,7 @@
         and is_postgresql is defined
         and is_postgresql == true
 - hosts: all
+  gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
   roles:
@@ -22,4 +24,4 @@
         and setup_postgresql_client is defined
         and postgresql_client == true
         and is_rdb_client is defined
-        and is_rdb_client == false
+        and is_rdb_client == true

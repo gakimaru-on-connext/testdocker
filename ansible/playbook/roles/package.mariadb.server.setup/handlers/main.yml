@@ -1,0 +1,19 @@
+---
+
+#----------------------------------------------------------
+- name: restart_mariadb_server
+  become: true
+  become_user: "{{ become_super_user }}"
+  #ignore_errors: true
+  systemd:
+    name: mariadb
+    state: restarted
+
+#----------------------------------------------------------
+- name: restart_mariadb_server_ignore_error
+  become: true
+  become_user: "{{ become_super_user }}"
+  ignore_errors: true
+  systemd:
+    name: mariadb
+    state: restarted
