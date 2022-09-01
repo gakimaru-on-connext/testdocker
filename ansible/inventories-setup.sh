@@ -1,15 +1,11 @@
-#!/bin/sh
+#!/bin/sh -e
 
 # playbook/inventories/base/_*.hosts.yml を編集してこのスクリプトを実行すると、
 # playbook/inventories/tempaltes/_*.yml と合成して、
 # playbook/inventories/*.hosts.yml を生成する
 
 CURDIR=$(cd $(dirname $0);pwd)
-PLAYBOOK_DIR=$CURDIR/playbook
-INVENTORIES=inventories
-INVENTORIES_DIR=$PLAYBOOK_DIR/$INVENTORIES
-INVENTORIES_TEMPLATES_DIR=$INVENTORIES_DIR/templates
-INVENTORIES_BASE_DIR=$INVENTORIES_DIR/base
+source $CURDIR/_env.rc
 
 cd $INVENTORIES_BASE_DIR
 for FILE in _*.hosts.yml

@@ -3,11 +3,11 @@
 #
 # DO NOT MODIFY this file directly.
 #
-# Create by ansible/inventories-create.sh
+# Create by ansible/inventories-setup.sh
 #
 # Please modify base inventory:
 #   ansible/playbook/inventories/base/_$FILE
-# and run ansible/inventories-create.sh
+# and run ansible/inventories-setup.sh
 
 all:
   children:

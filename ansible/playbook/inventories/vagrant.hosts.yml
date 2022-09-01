@@ -3,11 +3,11 @@
 #
 # DO NOT MODIFY this file directly.
 #
-# Create by ansible/inventories-create.sh
+# Create by ansible/inventories-setup.sh
 #
 # Please modify base inventory:
 #   ansible/playbook/inventories/base/_vagrant.hosts.yml
-# and run ansible/inventories-create.sh
+# and run ansible/inventories-setup.sh
 
 all:
   children:
@@ -219,71 +219,104 @@ all:
         cache_shard_03_replica_hosts:
       vars:
         is_cache_master: false
+    # 管理サーバー
+    admin_hosts:
+      children:
+        host_01:
+    # コンテナ
+    container_hosts:
+      children:
+        front_hosts:
+        api_hosts:
+        rdb_hosts:
+        ddb_hosts:
+        admin_hosts:
+    # コンテナオーケストレーションサーバー
+    container_orchestration_hosts:
+      children:
+        host_01:
     #--------------------
     # 系統別ホストグループ
     #--------------------
-    # 全Webフロントエンド
+    # 全Webフロントエンドサーバー
     front_all:
       children:
         front_hosts:
       vars:
-        is_front: true
-    # 全WebAPI
+        is_front_server: true
+    # 全WebAPIサーバー
     api_all:
       children:
         api_hosts:
       vars:
-        is_api: true
-    # 全Web
+        is_api_server: true
+    # 全Webサーバー
     web_all:
       children:
         front_all:
         api_all:
       vars:
-        is_web: true
-    # 全RDB
+        is_web_server: true
+        is_rdb_client: true
+        is_ddb_client: true
+        is_cache_client: true
+    # 全RDBサーバー
     rdb_all:
       children:
         rdb_master_hosts:
         rdb_slave_hosts:
       vars:
-        is_rdb: true
-    # 全ドキュメントDB
+        is_rdb_server: true
+    # 全ドキュメントDBサーバー
     ddb_all:
       children:
         ddb_master_hosts:
         ddb_replica_hosts:
       vars:
-        is_ddb: true
-    # 全DB
+        is_ddb_server: true
+    # 全DBサーバー
     db_all:
       children:
         rdb_all:
         ddb_all:
       vars:
-        is_db: true
-    # 全キャッシュ
+        is_db_server: true
+    # 全キャッシュサーバー
     cache_all:
       children:
         cache_master_hosts:
         cache_replica_hosts:
       vars:
-        is_cache: true
+        is_cache_server: true
+    # 全管理サーバー
+    admin_all:
+      children:
+        admin_hosts:
+      vars:
+        is_admin_server: true
+    # コンテナ
+    container_all:
+      children:
+        container_hosts:
+      vars:
+        is_container: true
+    # コンテナオーケストレーション
+    container_orchestration_all:
+      children:
+        container_orchestration_hosts:
+      vars:
+        is_container_orchestration_server: true
     # 全ホスト
     hosts_all:
       children:
         web_all:
         db_all:
         cache_all:
+        container_all:
+        container_orchestration_all:
     #--------------------
     # パッケージ別ホストグループ
     #--------------------
-    # Docker
-    docker:
-      children:
-        hosts_all:
-      vars:
-        is_docker: true
     # Ngginx
     nginx:
       children:
@@ -294,18 +327,38 @@ all:
     mariadb:
       children:
         rdb_all:
+      vars:
+        is_mariadb: true
     # PostgreSQL
     pstgresql:
       children:
         rdb_all:
+      vars:
+        is_postgresql: true
     # MongoDB
     mongodb:
       children:
         ddb_all:
-    # Redis用
+      vars:
+        is_mongodb: true
+    # Redis
     redis:
       children:
         cache_all:
+      vars:
+        is_redis: true
+    # Docker
+    docker:
+      children:
+        container_all:
+      vars:
+        is_docker: true
+    # Docker Swarm
+    docker_swarm:
+      children:
+        container_orchestration_all:
+      vars:
+        is_docker_swarm: true
   vars:
     #--------------------
     # 環境設定
@@ -340,30 +393,61 @@ all:
     proj_user_sudoer: true
     proj_user_umask: "0002"
     #--------------------
-    # パッケージ：コンテナ設定
-    #--------------------
-    setup_docker: true
-    setup_docker_swarm: true
-    #--------------------
     # パッケージ：RDB設定
     #--------------------
-    setup_mariadb: true
-    setup_posgresql: true
+    setup_rdb: true
     rdb_cluster: false
     rdb_with_replica: false
     #--------------------
+    # パッケージ：RDB：MariaDB設定
+    #--------------------
+    setup_mariadb_server: true
+    setup_mariadb_client: true
+    mariadb_root_user: root
+    mariadb_root_password: hogehoge
+    #--------------------
+    # パッケージ：RDB：PostgreSQL設定
+    #--------------------
+    setup_posgresql_server: true
+    setup_posgresql_client: true
+    postgresql_root_user: root
+    postgresql_root_password: hogehoge
+    #--------------------
     # パッケージ：ドキュメントDB設定
     #--------------------
-    setup_mongodb: true
+    setup_ddb: true
+    #--------------------
+    # パッケージ：ドキュメントDB：MongoDB設定
+    #--------------------
+    setup_mongodb_server: true
+    setup_mongodb_client: true
     ddb_cluster: false
     ddb_with_replica: false
     #--------------------
     # パッケージ：キャッシュ設定
     #--------------------
-    setup_redis: true
+    setup_cache: true
+    #--------------------
+    # パッケージ：キャッシュ：redis設定
+    #--------------------
+    setup_redis_server: true
+    setup_redis_client: true
     cache_cluster: false
     cache_with_replica: false
     #--------------------
     # パッケージ：Webサーバー設定
     #--------------------
+    setup_web: true
+    #--------------------
+    # パッケージ：Webサーバー：Nginx設定
+    #--------------------
     setup_nginx: true
+    #--------------------
+    # パッケージ：コンテナ設定
+    #--------------------
+    setup_container: true
+    #--------------------
+    # パッケージ：コンテナ設定：Docker
+    #--------------------
+    setup_docker: true
+    setup_docker_swarm: true

@@ -1,11 +1,9 @@
-#!/bin/sh
+#!/bin/sh -e
 
 # playbook/inventories/*.hosts.yml の内容に問題がないか検証する
 
 CURDIR=$(cd $(dirname $0);pwd)
-PLAYBOOK_DIR=$CURDIR/playbook
-INVENTORIES=inventories
-INVENTORIES_DIR=$PLAYBOOK_DIR/$INVENTORIES
+source $CURDIR/_env.rc
 
 cd $INVENTORIES_DIR
 for FILE in *.hosts.yml

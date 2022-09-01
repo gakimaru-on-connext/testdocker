@@ -3,7 +3,6 @@
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
   roles:
-    - role: info.inventory
     - role: os.base.setup
       when: setup_os_base is defined
         and setup_os_base == true

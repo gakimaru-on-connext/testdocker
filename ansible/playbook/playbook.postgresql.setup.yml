@@ -1,0 +1,25 @@
+---
+- hosts: postgresql
+  vars_files:
+    - "{{ playbook_dir }}/vars/common_vars.yml"
+  roles:
+    - role: package.postgresql.server.setup
+      when: setup_rdb is defined
+        and setup_rdb == true
+        and setup_postgresql_server is defined
+        and postgresql_server == true
+        and is_rdb_server is defined
+        and is_rdb_server == true
+        and is_postgresql is defined
+        and is_postgresql == true
+- hosts: all
+  vars_files:
+    - "{{ playbook_dir }}/vars/common_vars.yml"
+  roles:
+    - role: package.postgresql.client.setup
+      when: setup_rdb is defined
+        and setup_rdb == true
+        and setup_postgresql_client is defined
+        and postgresql_client == true
+        and is_rdb_client is defined
+        and is_rdb_client == false

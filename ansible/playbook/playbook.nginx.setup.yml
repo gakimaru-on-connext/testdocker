@@ -1,0 +1,14 @@
+---
+- hosts: nginx
+  vars_files:
+    - "{{ playbook_dir }}/vars/common_vars.yml"
+  roles:
+    - role: package.nginx.setup
+      when: setup_web is defined
+        and setup_web == true
+        and setup_nginx is defined
+        and setup_nginx == true
+        and is_web_server is defined
+        and is_web_server == true
+        and is_nginx is defined
+        and is_nginx == true

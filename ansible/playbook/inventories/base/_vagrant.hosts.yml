@@ -209,6 +209,22 @@ all:
         cache_shard_03_replica_hosts:
       vars:
         is_cache_master: false
+    # 管理サーバー
+    admin_hosts:
+      children:
+        host_01:
+    # コンテナ
+    container_hosts:
+      children:
+        front_hosts:
+        api_hosts:
+        rdb_hosts:
+        ddb_hosts:
+        admin_hosts:
+    # コンテナオーケストレーションサーバー
+    container_orchestration_hosts:
+      children:
+        host_01:
   vars:
     #--------------------
     # 環境設定
@@ -243,30 +259,61 @@ all:
     proj_user_sudoer: true
     proj_user_umask: "0002"
     #--------------------
-    # パッケージ：コンテナ設定
-    #--------------------
-    setup_docker: true
-    setup_docker_swarm: true
-    #--------------------
     # パッケージ：RDB設定
     #--------------------
-    setup_mariadb: true
-    setup_posgresql: true
+    setup_rdb: true
     rdb_cluster: false
     rdb_with_replica: false
     #--------------------
+    # パッケージ：RDB：MariaDB設定
+    #--------------------
+    setup_mariadb_server: true
+    setup_mariadb_client: true
+    mariadb_root_user: root
+    mariadb_root_password: hogehoge
+    #--------------------
+    # パッケージ：RDB：PostgreSQL設定
+    #--------------------
+    setup_posgresql_server: true
+    setup_posgresql_client: true
+    postgresql_root_user: root
+    postgresql_root_password: hogehoge
+    #--------------------
     # パッケージ：ドキュメントDB設定
     #--------------------
-    setup_mongodb: true
+    setup_ddb: true
+    #--------------------
+    # パッケージ：ドキュメントDB：MongoDB設定
+    #--------------------
+    setup_mongodb_server: true
+    setup_mongodb_client: true
     ddb_cluster: false
     ddb_with_replica: false
     #--------------------
     # パッケージ：キャッシュ設定
     #--------------------
-    setup_redis: true
+    setup_cache: true
+    #--------------------
+    # パッケージ：キャッシュ：redis設定
+    #--------------------
+    setup_redis_server: true
+    setup_redis_client: true
     cache_cluster: false
     cache_with_replica: false
     #--------------------
     # パッケージ：Webサーバー設定
     #--------------------
+    setup_web: true
+    #--------------------
+    # パッケージ：Webサーバー：Nginx設定
+    #--------------------
     setup_nginx: true
+    #--------------------
+    # パッケージ：コンテナ設定
+    #--------------------
+    setup_container: true
+    #--------------------
+    # パッケージ：コンテナ設定：Docker
+    #--------------------
+    setup_docker: true
+    setup_docker_swarm: true

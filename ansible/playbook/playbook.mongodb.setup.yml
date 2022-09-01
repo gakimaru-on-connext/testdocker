@@ -1,0 +1,25 @@
+---
+- hosts: mongodb
+  vars_files:
+    - "{{ playbook_dir }}/vars/common_vars.yml"
+  roles:
+    - role: package.mongodb.server.setup
+      when: setup_ddb is defined
+        and setup_ddb == true
+        and setup_mongodb_server is defined
+        and mongodb_server == true
+        and is_ddb_server is defined
+        and is_ddb_server == true
+        and is_mongodb is defined
+        and is_mongodb == true
+- hosts: all
+  vars_files:
+    - "{{ playbook_dir }}/vars/common_vars.yml"
+  roles:
+    - role: package.mongodb.client.setup
+      when: setup_ddb is defined
+        and setup_ddb == true
+        and setup_mongodb_client is defined
+        and mongodb_client == true
+        and is_ddb_client is defined
+        and is_ddb_client == false

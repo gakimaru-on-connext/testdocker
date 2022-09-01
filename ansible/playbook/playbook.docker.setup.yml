@@ -1,0 +1,34 @@
+---
+- hosts: docker
+  vars_files:
+    - "{{ playbook_dir }}/vars/common_vars.yml"
+  roles:
+    - role: package.docker.setup
+      when: setup_container is defined
+        and setup_container == true
+        and setup_docker is defined
+        and setup_docker == true
+        and is_container is defined
+        and is_container == true
+- hosts: docker_swarm
+  vars_files:
+    - "{{ playbook_dir }}/vars/common_vars.yml"
+  roles:
+    - role: package.docker_swarm.server.setup
+      when: setup_container is defined
+        and setup_container == true
+        and setup_docker_swarm is defined
+        and setup_docker_swarm == true
+        and is_container_orchestration_server is defined
+        and is_container_orchestration_server == true
+- hosts: all
+  vars_files:
+    - "{{ playbook_dir }}/vars/common_vars.yml"
+  roles:
+    - role: package.docker_swarm.client.setup
+      when: setup_container is defined
+        and setup_container == true
+        and setup_docker_swarm is defined
+        and setup_docker_swarm == true
+        and is_container_orchestration_client is defined
+        and is_container_orchestration_client == true

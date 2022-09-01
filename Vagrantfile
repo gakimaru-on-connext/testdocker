@@ -104,13 +104,13 @@ Vagrant.configure("2") do |config|
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
-  config.vm.provision :shell, privileged: true, path: "./setup/setup-os.sh", reboot: true
-  config.vm.provision :shell, privileged: true, path: "./setup/setup-mariadb.sh"
-  config.vm.provision :shell, privileged: true, path: "./setup/setup-postgresql.sh"
-  config.vm.provision :shell, privileged: true, path: "./setup/setup-mongodb.sh"
-  config.vm.provision :shell, privileged: true, path: "./setup/setup-nginx.sh"
-  config.vm.provision :shell, privileged: true, path: "./setup/setup-docker.sh"
-  config.vm.provision :docker
-  config.vm.provision :reload
-  config.vm.provision :docker_compose, yml: "/vagrant/docker/docker-compose.yml", run: "always"
+  #config.vm.provision :shell, privileged: true, path: "./setup/setup-os.sh", reboot: true
+  #config.vm.provision :shell, privileged: true, path: "./setup/setup-docker.sh"
+  #config.vm.provision :shell, privileged: true, path: "./setup/setup-mariadb.sh"
+  #config.vm.provision :shell, privileged: true, path: "./setup/setup-postgresql.sh"
+  #config.vm.provision :shell, privileged: true, path: "./setup/setup-mongodb.sh"
+  #config.vm.provision :shell, privileged: true, path: "./setup/setup-nginx.sh"
+  #config.vm.provision :docker
+  #config.vm.provision :reload
+  #config.vm.provision :docker_compose, yml: "/vagrant/docker/docker-compose.yml", run: "always"
 end
