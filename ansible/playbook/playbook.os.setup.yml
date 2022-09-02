@@ -1,5 +1,6 @@
 ---
 - hosts: all
+  tags: os
   gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"

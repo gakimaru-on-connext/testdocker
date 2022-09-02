@@ -35,6 +35,9 @@ do
     -v* )
         VERBOSE_OPT=$OPT
         ;;
+    --tags=* )
+        TAGS_OPT=$OPT
+        ;;
     "--check" )
         echo "********** dry-run mode **********"
         CHECK_OPT=$OPT
@@ -108,6 +111,7 @@ fi
 #export BUILD_APP
 #export UPDATE_APP
 #export VERBOSE_OPT
+#export TAGS_OPT
 #export CHECK_OPT
 
 echo ""
@@ -116,6 +120,7 @@ echo SETUP_INVENTORIES=$SETUP_INVENTORIES
 echo BUILD_APP=$BUILD_APP
 echo UPDATE_APP=$UPDATE_APP
 echo VERBOSE_OPT=$VERBOSE_OPT
+echo TAGS_OPT=$TAGS_OPT
 
 # extra-vars
 EXTRA_VARS=""
@@ -124,7 +129,7 @@ EXTRA_VARS="$EXTRA_VARS update_app=$UPDATE_APP"
 echo EXTRA_VARS="$EXTRA_VARS"
 
 # ansible option
-ANSIBLE_OPT="$VERBOSE_OPT $CHECK_OPT"
+ANSIBLE_OPT="$VERBOSE_OPT $TAGS_OPT $CHECK_OPT"
 #export ANSIBLE_OPT
 
 if [ -z ${CONFIRM+x} ]; then

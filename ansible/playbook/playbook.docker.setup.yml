@@ -1,5 +1,6 @@
 ---
 - hosts: docker
+  tags: docker
   gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
@@ -12,6 +13,7 @@
         and is_container is defined
         and is_container == true
 - hosts: docker_swarm
+  tags: docker_swarm,docker_swarm_server
   gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
@@ -24,6 +26,7 @@
         and is_container_orchestration_server is defined
         and is_container_orchestration_server == true
 - hosts: all
+  tags: docker_swarm_client
   gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"

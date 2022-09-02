@@ -1,5 +1,6 @@
 ---
 - hosts: postgresql
+  tags: postgresql,postgresql_server
   gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
@@ -8,12 +9,13 @@
       when: setup_rdb is defined
         and setup_rdb == true
         and setup_postgresql_server is defined
-        and postgresql_server == true
+        and setup_postgresql_server == true
         and is_rdb_server is defined
         and is_rdb_server == true
         and is_postgresql is defined
         and is_postgresql == true
 - hosts: all
+  tags: postgresql,postgresql_client
   gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
@@ -22,6 +24,6 @@
       when: setup_rdb is defined
         and setup_rdb == true
         and setup_postgresql_client is defined
-        and postgresql_client == true
+        and setup_postgresql_client == true
         and is_rdb_client is defined
         and is_rdb_client == true

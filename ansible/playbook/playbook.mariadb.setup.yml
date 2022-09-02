@@ -1,5 +1,6 @@
 ---
 - hosts: mariadb
+  tags: mariadb,mariadb_server
   gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
@@ -14,6 +15,7 @@
         and is_mariadb is defined
         and is_mariadb == true
 - hosts: all
+  tags: mariadb,mariadb_client
   gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
