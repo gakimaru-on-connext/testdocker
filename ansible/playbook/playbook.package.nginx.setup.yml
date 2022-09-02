@@ -1,3 +1,6 @@
+# ------------------------------------------------------------
+# ansible/playbook/playbook.package.nginx.setup.yml
+
 ---
 - hosts: nginx
   tags: nginx
@@ -14,3 +17,6 @@
         and is_web_server == true
         and is_nginx is defined
         and is_nginx == true
+
+# ------------------------------------------------------------
+# EOF

@@ -35,10 +35,16 @@ expect -c '
     send "y\n";
     interact;'
 
-AdminPasswd=hogehoge
+#AdminDb=admin
+#CREATE DATABASE $AdminDb;
+
+AdminUser=admin
+AdminPassword=hogehoge
 MYSQL_PWD=$NewRootPasswd mysql -u root <<EOD
-CREATE DATABASE admin;
-GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' IDENTIFIED BY '$AdminPasswd' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO '$AdminUser'@'localhost' IDENTIFIED BY '$AdminPassword' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO '$AdminUser'@'127.0.0.1' IDENTIFIED BY '$AdminPassword' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO '$AdminUser'@'::1' IDENTIFIED BY '$AdminPassword' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO '$AdminUser'@'192.168.56.%' IDENTIFIED BY '$AdminPassword' WITH GRANT OPTION;
 EOD
 
 firewall-cmd --add-port=3306/tcp --permanent
@@ -46,4 +52,4 @@ firewall-cmd --reload
 
 # client
 # $ brew install mysql-client
-# $ mysql -u admin -h 192.168.56.10 --password=$AdminnPasswd admin
+# $ mysql -u admin -h 192.168.56.10 --password=$AdminnPasswd mysql

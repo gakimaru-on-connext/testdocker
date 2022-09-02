@@ -1,118 +1,119 @@
----
+# ------------------------------------------------------------
+# ansible/playbook/roles/package.postgresql.server.setup/tasks/main.yml
 
-#------------------------------------------------------------
-# RedHat 9 type on super-user block
-- name: setup_postgresql_server_on_redhat9_by_super_user
-  when: ansible_distribution_file_variety == "RedHat"
-    and ansible_distribution_major_version == "9"
+---
+- include_vars: vars.yml
+
+# ------------------------------------------------------------
+# Super-user block
+- name: Setup postgresql server by super user
   become: true
   become_user: "{{ become_super_user }}"
-  #ignore_errors: true
+  # ignore_errors: true
   block:
 
-    #------------------------------------------------------------
-    - name: install_postgresql_server
+  # ------------------------------------------------------------
+  # RedHat 9 type on super-user block
+  - name: Setup postgresql server on redhat9 by super user
+    when: ansible_distribution_file_variety == "RedHat"
+      and ansible_distribution_major_version == "9"
+    # ignore_errors: true
+    block:
+
+    # ------------------------------------------------------------
+    - name: Install postgresql server
       dnf:
         name: "{{ item }}"
         state: latest
       with_items:
-        - postgresql-server
-        - python3
-        - python3-psycopg2
+      - postgresql-server
+      - python3
+      - python3-psycopg2
 
-    #----------------------------------------------------------
-    - name: postgresql_initdb
+    # ----------------------------------------------------------
+    - name: Run initdb
       shell: "postgresql-setup initdb"
       args:
-        creates: /var/lib/pgsql/data/postgresql.conf
+        creates: "{{ server_conf_path }}"
 
-    #----------------------------------------------------------
-    - name: start_postgresql_server
+    # ----------------------------------------------------------
+    - name: Start postgresql server
       systemd:
         name: postgresql
         state: started
-        #daemon_reload: true
+        # daemon_reload: true
         enabled: true
 
-#------------------------------------------------------------
-# Postgres-user block
-- name: setup_postgresql_server_by_postgres
-  become: true
-  become_user: "{{ postgresql_postgres_user }}"
-  #ignore_errors: true
-  block:
-
-    #----------------------------------------------------------
-    - name: setup_admin_db
-      postgresql_db:
-        login_user: "{{ postgresql_postgres_user }}"
-        name: "{{ postgresql_admin_db }}"
-        encoding: "{{ postgresql_encoding }}"
-
-    #----------------------------------------------------------
-    - name: setup_admin_user
-      postgresql_user:
-        login_user: "{{ postgresql_postgres_user }}"
-        name: "{{ postgresql_admin_user }}"
-        encrypted: true
-        password: "{{ postgresql_admin_hashed_password }}"
-        #encrypted: false
-        #password: "{{ postgresql_admin_user }}"
-        db: "{{ postgresql_admin_db }}"
-        priv: ALL
-        state: present
-
-#------------------------------------------------------------
-# Super-user block
-- name: setup_postgresql_server_by_super_user
-  become: true
-  become_user: "{{ become_super_user }}"
-  #ignore_errors: true
-  block:
-
-    #------------------------------------------------------------
-    - name: setup_firewalld_for_postgresql
+    # ------------------------------------------------------------
+    - name: Setup firewalld for postgresql
       firewalld:
         port: 5432/tcp
         permanent: true
         immediate: true
         state: enabled
 
-#------------------------------------------------------------
-# RedHat 9 type on super-user block
-- name: setup_postgresql_server_on_redhat9_by_super_user_2
-  when: ansible_distribution_file_variety == "RedHat"
-    and ansible_distribution_major_version == "9"
+    # ------------------------------------------------------------
+    # End of [RedHat 9 type block]
+
+  # ------------------------------------------------------------
+  # End of [Super-user block]
+
+# ------------------------------------------------------------
+# Postgres-user block
+- name: Setup postgresql server by postgres
   become: true
-  become_user: "{{ become_super_user }}"
-  #ignore_errors: true
+  become_user: "{{ postgresql_postgres_user }}"
+  # ignore_errors: true
   block:
 
-    #----------------------------------------------------------
-    - name: setup_postgresql_listen_address
-      lineinfile:
-        dest: /var/lib/pgsql/data/postgresql.conf
-        insertafter: "#listen_addresses = 'localhost'"
-        line: "listen_addresses = '*'"
-      notify: restart_postgresql_server
+  # ----------------------------------------------------------
+  - name: Setup postgresql listen addresses
+    lineinfile:
+      dest: "{{ server_conf_path }}"
+      insertafter: "#listen_addresses = 'localhost'"
+      line: "listen_addresses = '*'"
+    notify: Restart postgresql server
 
-    #----------------------------------------------------------
-    - name: setup_postgresql_user_access
-      postgresql_pg_hba:
-        dest: /var/lib/pgsql/data/pg_hba.conf
-        address: all
-        contype: host
-        users: "{{ postgresql_admin_user }}"
-        source: "{{ item }}"
-        databases: all
-        method: md5
-        create: true
-      with_items:
-        - localhost
-        - 127.0.0.1
-        - ::1
-        - "{{ postgresql_admin_accessable_host }}"
-      notify: restart_postgresql_server
+  # ----------------------------------------------------------
+  - name: Setup admin db
+    postgresql_db:
+      login_user: "{{ postgresql_postgres_user }}"
+      name: "{{ postgresql_admin_db }}"
+      encoding: "{{ postgresql_encoding }}"
 
-#------------------------------------------------------------
+  # ----------------------------------------------------------
+  - name: Setup admin user
+    postgresql_user:
+      login_user: "{{ postgresql_postgres_user }}"
+      name: "{{ postgresql_admin_user }}"
+      encrypted: true
+      password: "{{ postgresql_admin_hashed_password }}"
+      # encrypted: false
+      # password: "{{ postgresql_admin_user }}"
+      db: "{{ postgresql_admin_db }}"
+      priv: ALL
+      state: present
+
+  # ----------------------------------------------------------
+  - name: Setup admin user access
+    postgresql_pg_hba:
+      dest: "{{ pg_hba_path }}"
+      address: all
+      contype: host
+      users: "{{ postgresql_admin_user }}"
+      source: "{{ item }}"
+      databases: all
+      method: md5
+      create: true
+    with_items:
+    - localhost
+    - 127.0.0.1
+    - ::1
+    - "{{ postgresql_admin_accessable_host }}"
+    notify: Restart postgresql server
+
+  # ------------------------------------------------------------
+  # End of [Postgres-user block]
+
+# ------------------------------------------------------------
 # EOF

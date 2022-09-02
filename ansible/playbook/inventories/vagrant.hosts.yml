@@ -386,6 +386,7 @@ all:
     lang_package: langpacks-ja
     os_locale: ja_JP.UTF-8
     os_timezone: Asia/Tokyo
+    os_limit_nofile: 524288
     #--------------------
     # OS：ユーザー設定
     #--------------------
@@ -394,6 +395,7 @@ all:
     proj_group: test
     proj_groups: "{{ proj_group }}"
     proj_user_home: "/home/{{ proj_user }}"
+    proj_user_shell: /bin/bash
     proj_user_generate_ssh_key: true
     proj_user_with_authorized_keys: true
     proj_user_sudoer: true
@@ -470,5 +472,5 @@ all:
     setup_docker: true
     setup_docker_swarm: true
 
-#------------------------------------------------------------
+# ------------------------------------------------------------
 # EOF

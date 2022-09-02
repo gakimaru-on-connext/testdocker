@@ -1,112 +1,127 @@
+# ------------------------------------------------------------
+# ansible/playbook/roles/os.base.setup/tasks/main.yml
+
 ---
 - include_vars: vars.yml
 
-#------------------------------------------------------------
-# RedHat 9 type on super-user block
-- name: setup_os_base_on_redhat9_by_super_user
-  when: ansible_distribution_file_variety == "RedHat"
-    and ansible_distribution_major_version == "9"
+# ------------------------------------------------------------
+# Super-user block
+- name: Setup os base by super user
   become: true
   become_user: "{{ become_super_user }}"
-  #ignore_errors: true
+  # ignore_errors: true
   block:
 
-    #------------------------------------------------------------
-    - name: add_epel_repository_block
+  # ------------------------------------------------------------
+  # RedHat 9 type block
+  - name: Setup os base on redhat9 by super user
+    when: ansible_distribution_file_variety == "RedHat"
+      and ansible_distribution_major_version == "9"
+    # ignore_errors: true
+    block:
+
+    # ------------------------------------------------------------
+    - name: Add epel repository block
       when: with_epel_repository is defined
         and with_epel_repository == true
+      # ignore_errors: true
       block:
 
-        #------------------------------------------------------------
-        - name: add_epel_repository
-          dnf:
-            name: epel-release
-            state: present
-            enablerepo: epel-release
+      # ------------------------------------------------------------
+      - name: Add epel repository
+        dnf:
+          name: epel-release
+          state: present
+          enablerepo: epel-release
 
-    #------------------------------------------------------------
-    - name: add_remi_repository_block
+      # ------------------------------------------------------------
+      # End of [Add epel repository block]
+
+    # ------------------------------------------------------------
+    - name: Add remi repository block
       when: with_remi_repository is defined
         and with_remi_repository == true
+      # ignore_errors: true
       block:
 
-        - name: install_rpm_key_for_remi_repository
-          rpm_key:
-            key: https://rpms.remirepo.net/RPM-GPG-KEY-remi2021
-            state: present
+      - name: Install rpm key for remi repository
+        rpm_key:
+          key: "{{ remi_repository_base_url }}/RPM-GPG-KEY-remi2021"
+          state: present
 
-        #------------------------------------------------------------
-        - name: add_remi_repository
-          dnf:
-            name: https://rpms.remirepo.net/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm
-            state: present
-            enablerepo: remi
+      # ------------------------------------------------------------
+      - name: Add remi repository
+        dnf:
+          name: "{{ remi_repository_base_url }}/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
+          state: present
+          enablerepo: remi
 
-    #------------------------------------------------------------
-    - name: upgrade_all_packages
+      # ------------------------------------------------------------
+      # End of [Add remi repository block]
+
+    # ------------------------------------------------------------
+    - name: Upgrade all packages
       dnf:
         name: "*"
         state: latest
 
-    #------------------------------------------------------------
-    - name: install_basic_packages
+    # ------------------------------------------------------------
+    - name: Install basic packages
       dnf:
         name: "{{ item }}"
         state: latest
       with_items:
         - expect
 
-    #------------------------------------------------------------
-    - name: install_language_packages
+    # ------------------------------------------------------------
+    - name: Install language packages
       dnf:
         name: "{{ lang_package }}"
         state: latest
       when: lang_package is defined
         and lang_package != ''
 
-#------------------------------------------------------------
-# Super-user block
-- name: setup_os_base_by_super_user
-  become: true
-  become_user: "{{ become_super_user }}"
-  #ignore_errors: true
-  block:
+    # ------------------------------------------------------------
+    # End of [RedHat 9 type block]
 
-    #------------------------------------------------------------
-    - name: set_hostname
-      hostname: 
-        name: "{{ host_name }}"
-      when: host_name is defined
-        and host_name != ''
+  # ------------------------------------------------------------
+  - name: Set hostname
+    hostname: 
+      name: "{{ host_name }}"
+    when: host_name is defined
+      and host_name != ''
 
-    #------------------------------------------------------------
-    - name: set_locale
-      shell: "localectl set-locale LANG={{ os_locale }}"
-      #locale_gen:
-      #  name: "{{ os_locale }}"
-      #  state: present
-      when: os_locale is defined
-        and os_locale != ''
+  # ------------------------------------------------------------
+  - name: Set locale
+    shell: "localectl set-locale LANG={{ os_locale }}"
+    # locale_gen:
+    #   name: "{{ os_locale }}"
+    #   state: present
+    when: os_locale is defined
+      and os_locale != ''
 
-    #------------------------------------------------------------
-    - name: set_timezone
-      community.general.timezone:
-        name: "{{ os_timezone }}"
-      when: os_timezone is defined
-        and os_timezone != ''
+  # ------------------------------------------------------------
+  - name: Set timezone
+    community.general.timezone:
+      name: "{{ os_timezone }}"
+    when: os_timezone is defined
+      and os_timezone != ''
 
-    #------------------------------------------------------------
-    - name: set_pam_limits
-      pam_limits:
-        domain: "{{ item.domain }}"
-        limit_type: "{{ item.limit_type }}"
-        limit_item: "{{ item.limit_item }}"
-        value: "{{ item.value }}"
-      with_items:
-        - domain: "*"
-          limit_type: "-"
-          limit_item: "nofile"
-          value: "{{ os_limit_nofile }}"
+  # ------------------------------------------------------------
+  - name: Set pam limits
+    pam_limits:
+      domain: "{{ item.domain }}"
+      limit_type: "{{ item.limit_type }}"
+      limit_item: "{{ item.limit_item }}"
+      value: "{{ item.value }}"
+    with_items:
+    - domain: "*"
+      limit_type: "-"
+      limit_item: "nofile"
+      value: "{{ os_limit_nofile }}"
 
-#------------------------------------------------------------
+  # ------------------------------------------------------------
+  # End of [Super-user block]
+
+# ------------------------------------------------------------
 # EOF

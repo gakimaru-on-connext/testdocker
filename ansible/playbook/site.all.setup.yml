@@ -1,9 +1,15 @@
+# ------------------------------------------------------------
+# ansible/playbook/site.all.setup.yml
+
 ---
 - import_playbook: playbook.info.print.yml
 - import_playbook: playbook.os.setup.yml
-- import_playbook: playbook.mariadb.setup.yml
-- import_playbook: playbook.postgresql.setup.yml
-- import_playbook: playbook.mongodb.setup.yml
-- import_playbook: playbook.redis.setup.yml
-- import_playbook: playbook.nginx.setup.yml
-- import_playbook: playbook.docker.setup.yml
+- import_playbook: playbook.package.mariadb.setup.yml
+- import_playbook: playbook.package.postgresql.setup.yml
+- import_playbook: playbook.package.mongodb.setup.yml
+- import_playbook: playbook.package.redis.setup.yml
+- import_playbook: playbook.package.nginx.setup.yml
+- import_playbook: playbook.package.docker.setup.yml
+
+# ------------------------------------------------------------
+# EOF

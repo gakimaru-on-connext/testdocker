@@ -1,3 +1,6 @@
+# ------------------------------------------------------------
+# ansible/playbook/playbook.package.mariadb.setup.yml
+
 ---
 - hosts: mariadb
   tags: mariadb,mariadb_server
@@ -27,3 +30,6 @@
         and setup_mariadb_client == true
         and is_rdb_client is defined
         and is_rdb_client == true
+
+# ------------------------------------------------------------
+# EOF

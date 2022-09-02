@@ -1,3 +1,6 @@
+# ------------------------------------------------------------
+# ansible/playbook/playbook.info.print.yml
+
 ---
 - hosts: all
   tags: info
@@ -6,3 +9,6 @@
     - "{{ playbook_dir }}/vars/common_vars.yml"
   roles:
     - role: info.inventory
+
+# ------------------------------------------------------------
+# EOF

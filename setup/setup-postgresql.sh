@@ -22,19 +22,23 @@ systemctl status postgresql-14
 
 # ToDo: 設定済み判定＆スキップ
 
-ADMIN_PASSWD=hogehoge
-
+#AdminDb=admin
 sudo -i -u postgres psql <<EOD
-CREATE ROLE admin WITH LOGIN SUPERUSER CREATEDB CREATEROLE PASSWORD '$ADMIN_PASSWD';
-\du
-CREATE DATABASE admin;
+CREATE DATABASE $AdminDb;
 \l
+EOD
+
+AdminUser=admin
+AdminPassword=hogehoge
+sudo -i -u postgres psql <<EOD
+CREATE ROLE $AdminUser WITH LOGIN SUPERUSER CREATEDB CREATEROLE PASSWORD '$AdmninPassword';
+\du
 EOD
 
 PG_HBA_PATH=/var/lib/pgsql/14/data/pg_hba.conf
 
-sed -i "/host    all             all             127.0.0.1\/32            scram-sha-256/a host    all             all             0.0.0.0\/0               md5" $PG_HBA_PATH
-sed -i "/host    all             all             ::1\/128                 scram-sha-256/a host    all             all             0.0.0.0\/0               md5" $PG_HBA_PATH
+sed -i "/host    all             all             127.0.0.1\/32            scram-sha-256/a host    all             all             192.168.56.0\/24         md5" $PG_HBA_PATH
+#sed -i "/host    all             all             ::1\/128                 scram-sha-256/a host    all             all             192.168.56.0/24          md5" $PG_HBA_PATH
 
 PG_CONF_PATH=/var/lib/pgsql/14/data/postgresql.conf 
 
@@ -48,5 +52,5 @@ firewall-cmd --reload
 # client
 # $ brew install libpq
 # $ echo 'export PATH=$PATH:/usr/local/opt/libpq/bin' >> ~/.zshrc
-# $ psql -U admin -h 192.168.56.10 -d admin
-# $ psql 'postgres://admin:hogehoge@192.168.56.10:5432/admin?sslmode=disable'
+# $ psql -U admin -h 192.168.56.10 -d postgres
+# $ psql 'postgres://admin:hogehoge@192.168.56.10:5432/postgres?sslmode=disable'
