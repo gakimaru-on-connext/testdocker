@@ -19,7 +19,7 @@
   block:
 
     # ------------------------------------------------------------
-    # RedHat 9 type on Super user block
+    # RedHat 9 type on super user block
     - name: Setup mongodb server on redhat9 by super user
       when: ansible_distribution_file_variety == "RedHat"
         and ansible_distribution_major_version == "9"
@@ -55,7 +55,7 @@
         - name: Setup bindIp 1
           ansible.builtin.lineinfile:
             dest: "{{ server_conf_path }}"
-            regexp: "  bindIp: 127.0.0.1"
+            regexp: "  bindIp: 127\\.0\\.0\\.1"
             line: "  #bindIp: 127.0.0.1"
           notify: Restart mongodb server
 
@@ -63,7 +63,7 @@
         - name: Setup bindIp 2
           ansible.builtin.lineinfile:
             dest: "{{ server_conf_path }}"
-            insertafter: "  #bindIp: 127.0.0.1"
+            insertafter: "  #bindIp: 127\\.0\\.0\\.1"
             line: "  bindIp: ::,0.0.0.0"
           notify: Restart mongodb server
 

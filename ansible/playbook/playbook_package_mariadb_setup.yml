@@ -14,6 +14,10 @@
     - role: package_mariadb_server_setup
       when: setup_rdb is defined
         and setup_rdb
+        and setup_rdb_server is defined
+        and setup_rdb_server
+        and setup_mariadb is defined
+        and setup_mariadb
         and setup_mariadb_server is defined
         and setup_mariadb_server
         and is_rdb_server is defined
@@ -32,6 +36,10 @@
     - role: package_mariadb_client_setup
       when: setup_rdb is defined
         and setup_rdb
+        and setup_rdb_client is defined
+        and setup_rdb_client
+        and setup_mariadb is defined
+        and setup_mariadb
         and setup_mariadb_client is defined
         and setup_mariadb_client
         and is_rdb_client is defined

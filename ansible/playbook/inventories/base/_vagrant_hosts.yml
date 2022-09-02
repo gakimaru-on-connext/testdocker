@@ -265,11 +265,14 @@ all:
     # パッケージ：RDB設定
     # --------------------
     setup_rdb: true
+    setup_rdb_server: true
+    setup_rdb_client: true
     rdb_cluster: false
     rdb_with_replica: false
     # --------------------
     # パッケージ：RDB：MariaDB設定
     # --------------------
+    setup_mariadb: true
     setup_mariadb_server: true
     setup_mariadb_client: true
     mariadb_root_user: root
@@ -282,6 +285,7 @@ all:
     # --------------------
     # パッケージ：RDB：PostgreSQL設定
     # --------------------
+    setup_postgresql: true
     setup_postgresql_server: true
     setup_postgresql_client: true
     postgresql_postgres_user: postgres
@@ -297,9 +301,12 @@ all:
     # パッケージ：ドキュメントDB設定
     # --------------------
     setup_ddb: true
+    setup_ddb_server: true
+    setup_ddb_client: true
     # --------------------
     # パッケージ：ドキュメントDB：MongoDB設定
     # --------------------
+    setup_mongodb: true
     setup_mongodb_server: true
     setup_mongodb_client: true
     ddb_cluster: false
@@ -308,9 +315,12 @@ all:
     # パッケージ：キャッシュ設定
     # --------------------
     setup_cache: true
+    setup_cache_server: true
+    setup_cache_client: true
     # --------------------
     # パッケージ：キャッシュ：redis設定
     # --------------------
+    setup_redis: true
     setup_redis_server: true
     setup_redis_client: true
     cache_cluster: false
@@ -318,11 +328,11 @@ all:
     # --------------------
     # パッケージ：Webサーバー設定
     # --------------------
-    setup_web: true
+    setup_web_server: true
     # --------------------
     # パッケージ：Webサーバー：Nginx設定
     # --------------------
-    setup_nginx: true
+    setup_nginx_server: true
     # --------------------
     # パッケージ：コンテナ設定
     # --------------------
@@ -331,7 +341,8 @@ all:
     # パッケージ：コンテナ設定：Docker
     # --------------------
     setup_docker: true
-    setup_docker_swarm: true
+    setup_docker_swarm_server: true
+    setup_docker_swarm_client: true
 
 # ------------------------------------------------------------
 # EOF

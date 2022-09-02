@@ -44,7 +44,7 @@ PG_CONF_PATH=/var/lib/pgsql/14/data/postgresql.conf
 
 sed -i "/#listen_addresses = 'localhost'/a listen_addresses = '*'" $PG_CONF_PATH
 
-systemctl restart postgresql-14.service
+systemctl restart postgresql-14
 
 firewall-cmd --add-port=5432/tcp --permanent
 firewall-cmd --reload

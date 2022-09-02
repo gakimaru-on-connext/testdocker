@@ -13,4 +13,5 @@ firewall-cmd --permanent --zone=public --add-service=https
 firewall-cmd --reload
 
 # client
+# $ brew install curl
 # $ curl http://192.168.56.10

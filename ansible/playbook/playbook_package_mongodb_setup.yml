@@ -14,6 +14,10 @@
     - role: package_mongodb_server_setup
       when: setup_ddb is defined
         and setup_ddb
+        and setup_ddb_server is defined
+        and setup_ddb_server
+        and setup_mongodb is defined
+        and setup_mongodb
         and setup_mongodb_server is defined
         and setup_mongodb_server
         and is_ddb_server is defined
@@ -32,6 +36,10 @@
     - role: package_mongodb_client_setup
       when: setup_ddb is defined
         and setup_ddb
+        and setup_ddb_client is defined
+        and setup_ddb_client
+        and setup_mongodb is defined
+        and setup_mongodb
         and setup_mongodb_client is defined
         and setup_mongodb_client
         and is_ddb_client is defined

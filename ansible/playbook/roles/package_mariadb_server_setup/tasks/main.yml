@@ -15,7 +15,7 @@
   block:
 
     # ------------------------------------------------------------
-    # RedHat 9 type on Super user block
+    # RedHat 9 type on super user block
     - name: Setup mariadb server on redhat9 by super user
       when: ansible_distribution_file_variety == "RedHat"
         and ansible_distribution_major_version == "9"
@@ -85,7 +85,7 @@
       #   login_password: "{{ mariadb_root_password }}"
       #   login_db: mysql
       #   query: SET PASSWORD FOR "{{ mariadb_root_user }}"@"localhost" = PASSWORD("{{ mariadb_root_password }}");
-      ansible.builtin.command: "mysql -u root -h localhost mysql -e'SET PASSWORD FOR \"{{ mariadb_root_user }}\"@\"localhost\" = PASSWORD(\"{{ mariadb_root_password }}\")'"
+      ansible.builtin.command: "mysql mysql -e'SET PASSWORD FOR \"{{ mariadb_root_user }}\"@\"localhost\" = PASSWORD(\"{{ mariadb_root_password }}\")'"
 
     # ----------------------------------------------------------
     - name: Setup admin db
