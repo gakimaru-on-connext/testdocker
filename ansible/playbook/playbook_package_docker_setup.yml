@@ -1,0 +1,55 @@
+# ------------------------------------------------------------
+# ansible/playbook/playbook_package_docker_setup.yml
+
+---
+
+# ------------------------------------------------------------
+- name: Setup docker
+  hosts: docker
+  tags: docker
+  gather_facts: true
+  vars_files:
+    - "{{ playbook_dir }}/vars/common_vars.yml"
+  roles:
+    - role: package_docker_setup
+      when: setup_container is defined
+        and setup_container
+        and setup_docker is defined
+        and setup_docker
+        and is_container is defined
+        and is_container
+
+# ------------------------------------------------------------
+- name: Setup docker swarm server
+  hosts: docker_swarm
+  tags: docker_swarm,docker_swarm_server
+  gather_facts: true
+  vars_files:
+    - "{{ playbook_dir }}/vars/common_vars.yml"
+  roles:
+    - role: package_dockerswarm_server_setup
+      when: setup_container is defined
+        and setup_container
+        and setup_docker_swarm is defined
+        and setup_docker_swarm
+        and is_container_orchestration_server is defined
+        and is_container_orchestration_server
+
+# ------------------------------------------------------------
+- name: Setup docker swarm cilent
+  hosts: all
+  tags: docker_swarm,docker_swarm_client
+  gather_facts: true
+  vars_files:
+    - "{{ playbook_dir }}/vars/common_vars.yml"
+  roles:
+    - role: package_dockerswarm_client_setup
+      when: setup_container is defined
+        and setup_container
+        and setup_docker_swarm is defined
+        and setup_docker_swarm
+        and is_container_orchestration_client is defined
+        and is_container_orchestration_client
+
+# ------------------------------------------------------------
+# EOF

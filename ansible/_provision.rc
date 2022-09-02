@@ -17,8 +17,8 @@ fi
 
 cd $PLAYBOOK_DIR
 
-INVENTORY_FILE=$INVENTORIES/$TARGET_INVENTORY.hosts.yml
-SITE_FILE=site.$TARGET_SITE.yml
+INVENTORY_FILE=$INVENTORIES/${TARGET_INVENTORY}_hosts.yml
+SITE_FILE=site_${TARGET_SITE}.yml
 
 echo "----------------------------------------------------------------------"
 echo "[ $(basename $0) ]"

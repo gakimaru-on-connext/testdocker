@@ -1,8 +1,0 @@
-# ------------------------------------------------------------
-# ansible/playbook/roles/os.base.setup/vars/vars.yml
-
----
-remi_repository_base_url: https://rpms.remirepo.net
-
-# ------------------------------------------------------------
-# EOF
