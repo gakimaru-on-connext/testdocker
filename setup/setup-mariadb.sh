@@ -52,4 +52,4 @@ firewall-cmd --reload
 
 # client
 # $ brew install mysql-client
-# $ mysql -u admin -h 192.168.56.10 --password=$AdminnPasswd mysql
+# $ mysql -u admin -h 192.168.56.10 --password=hogehoge mysql
