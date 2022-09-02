@@ -15,7 +15,7 @@
       when: setup_ddb is defined
         and setup_ddb
         and setup_mongodb_server is defined
-        and mongodb_server
+        and setup_mongodb_server
         and is_ddb_server is defined
         and is_ddb_server
         and is_mongodb is defined
@@ -33,7 +33,7 @@
       when: setup_ddb is defined
         and setup_ddb
         and setup_mongodb_client is defined
-        and mongodb_client
+        and setup_mongodb_client
         and is_ddb_client is defined
         and is_ddb_client
 

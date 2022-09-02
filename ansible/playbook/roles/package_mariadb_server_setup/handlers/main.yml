@@ -5,7 +5,7 @@
 
 # ----------------------------------------------------------
 - name: Restart mariadb server
-  include_tasks: "{{ playbook_dir }}/roles/package_mariadb_server_setup/tasks/restart_mariadb_server.yml"
+  ansible.builtin.include_tasks: "{{ playbook_dir }}/roles/package_mariadb_server_setup/tasks/restart_mariadb_server.yml"
 
 # ------------------------------------------------------------
 # EOF

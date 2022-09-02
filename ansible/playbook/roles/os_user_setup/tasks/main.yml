@@ -34,7 +34,7 @@
         state: directory
         owner: "{{ proj_user }}"
         group: "{{ proj_group }}"
-        mode: 0700
+        mode: "0700"
       with_items:
         - "{{ proj_user_home }}/.ansible"
         - "{{ proj_user_home }}/.ansible/tmp"
@@ -62,7 +62,7 @@
         line: "Include config.d/*"
         owner: "{{ proj_user }}"
         group: "{{ proj_group }}"
-        mode: 0600
+        mode: "0600"
         create: true
         state: present
 
@@ -100,7 +100,7 @@
       ansible.builtin.template:
         src: sudoers-user.j2
         dest: "/etc/sudoers.d/{{ proj_user }}"
-        mode: 0440
+        mode: "0440"
       when: proj_user_sudoer is defined
         and proj_user_sudoer
 
@@ -111,7 +111,7 @@
         dest: "{{ proj_user_home }}/.bashrc.ext"
         owner: "{{ proj_user }}"
         group: "{{ proj_group }}"
-        mode: 0440
+        mode: "0440"
 
     # ------------------------------------------------------------
     - name: Setup .bashrc on project user

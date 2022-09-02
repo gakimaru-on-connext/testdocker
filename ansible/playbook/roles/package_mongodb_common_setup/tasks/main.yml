@@ -1,11 +1,10 @@
 # ------------------------------------------------------------
-# ansible/playbook/roles/package_mongodb_client_setup/tasks/main.yml
+# ansible/playbook/roles/package_mongodb_common_setup/tasks/main.yml
 
 ---
 
-- name: Import mongodb common setup role
-  ansible.builtin.import_role:
-    name: package_mongodb_common_setup
+- name: Include vars
+  ansible.builtin.include_vars: vars.yml
 
 # ------------------------------------------------------------
 # Super user block
@@ -24,13 +23,12 @@
       block:
 
         # ------------------------------------------------------------
-        - name: Install mongodb client
-          ansible.builtin.dnf:
-            name: "{{ item }}"
-            # state: latest
-            state: present
-          with_items:
-            - mongodb-org-tools
+        - name: Setup yum repository mongodb
+          ansible.builtin.copy:
+            #src: mongodb-org-6.0-redhat9.repo
+            src: mongodb-org-6.0-redhat8.repo
+            dest: "{{ yum_repo_path_v60_redhat9 }}"
+            mode: "0640"
 
 # ------------------------------------------------------------
 # EOF

@@ -62,16 +62,16 @@
         # ----------------------------------------------------------
         - name: Setup character-set-server
           ansible.builtin.lineinfile:
-            dest: "{{ server_conf_path }}"
-            insertafter: "{{ server_conf_tag }}"
+            dest: "{{ server_conf_path_v10 }}"
+            insertafter: "{{ server_conf_tag_v10 }}"
             line: "character-set-server={{ mariadb_character_set }}"
           notify: Restart mariadb server
 
         # ----------------------------------------------------------
         - name: Setup default-character-set
           ansible.builtin.lineinfile:
-            dest: "{{ client_conf_path }}"
-            insertafter: "{{ client_conf_tag }}"
+            dest: "{{ client_conf_path_v10 }}"
+            insertafter: "{{ client_conf_tag_v10 }}"
             line: "default-character-set={{ mariadb_character_set }}"
           notify: Restart mariadb server
 

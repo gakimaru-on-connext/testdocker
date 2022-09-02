@@ -13,8 +13,8 @@ systemctl stop mongod
 
 CONF_PATH=/etc/mongod.conf
 
-sed -i -e "/^  bindIp: 127.0.0.1/a \  bindIp: 0.0.0.0" $CONF_PATH
 sed -i -e "s,^  \(bindIp: 127.0.0.1\),  #\\1," $CONF_PATH
+sed -i -e "/^  #bindIp: 127.0.0.1/a \  bindIp: ::,0.0.0.0" $CONF_PATH
 
 systemctl start mongod
 systemctl enable mongod

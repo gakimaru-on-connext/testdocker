@@ -1,5 +1,5 @@
 # ------------------------------------------------------------
-# ansible/playbook/roles/package_postgresql_server_setup/handlers/main.yml
+# ansible/playbook/roles/package_postgresql_server_setup/tasks/restart_postgresql_server.yml
 
 ---
 
