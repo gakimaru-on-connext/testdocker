@@ -4,7 +4,7 @@
 ---
 
 # ------------------------------------------------------------
-- name: Sstup nginx
+- name: Setup nginx
   hosts: nginx
   tags: nginx
   gather_facts: true

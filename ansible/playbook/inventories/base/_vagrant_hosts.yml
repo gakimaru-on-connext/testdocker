@@ -79,28 +79,6 @@ all:
     # --------------------
     # 基本ホストグループ
     # --------------------
-    # Webフロントエンド
-    front_hosts:
-      children:
-        host_01:
-        host_02:
-        host_03:
-        host_04:
-        host_05:
-        host_06:
-        host_07:
-        host_08:
-    # WebAPI
-    api_hosts:
-      children:
-        host_01:
-        host_02:
-        host_03:
-        host_04:
-        host_05:
-        host_06:
-        host_07:
-        host_08:
     # RDBマスター
     rdb_master_hosts:
       children:
@@ -209,17 +187,43 @@ all:
         cache_shard_03_replica_hosts:
       vars:
         is_cache_master: false
+    # Webフロントエンド
+    front_hosts:
+      children:
+        host_01:
+        host_02:
+        host_03:
+        host_04:
+        host_05:
+        host_06:
+        host_07:
+        host_08:
+    # WebAPI
+    api_hosts:
+      children:
+        host_01:
+        host_02:
+        host_03:
+        host_04:
+        host_05:
+        host_06:
+        host_07:
+        host_08:
     # 管理サーバー
     admin_hosts:
+      children:
+        host_01:
+    # node.js アプリ
+    nodejs_hosts:
       children:
         host_01:
     # コンテナ
     container_hosts:
       children:
-        front_hosts:
-        api_hosts:
         rdb_hosts:
         ddb_hosts:
+        front_hosts:
+        api_hosts:
         admin_hosts:
     # コンテナオーケストレーションサーバー
     container_orchestration_hosts:
@@ -334,9 +338,14 @@ all:
     # --------------------
     setup_nginx_server: true
     # --------------------
+    # パッケージ：Node.js設定
+    # --------------------
+    setup_nodejs: true
+    # --------------------
     # パッケージ：コンテナ設定
     # --------------------
     setup_container: true
+    setup_container_orchestration: true
     # --------------------
     # パッケージ：コンテナ設定：Docker
     # --------------------

@@ -92,28 +92,6 @@ all:
     # --------------------
     # 基本ホストグループ
     # --------------------
-    # Webフロントエンド
-    front_hosts:
-      children:
-        host_01:
-        host_02:
-        host_03:
-        host_04:
-        host_05:
-        host_06:
-        host_07:
-        host_08:
-    # WebAPI
-    api_hosts:
-      children:
-        host_01:
-        host_02:
-        host_03:
-        host_04:
-        host_05:
-        host_06:
-        host_07:
-        host_08:
     # RDBマスター
     rdb_master_hosts:
       children:
@@ -222,17 +200,43 @@ all:
         cache_shard_03_replica_hosts:
       vars:
         is_cache_master: false
+    # Webフロントエンド
+    front_hosts:
+      children:
+        host_01:
+        host_02:
+        host_03:
+        host_04:
+        host_05:
+        host_06:
+        host_07:
+        host_08:
+    # WebAPI
+    api_hosts:
+      children:
+        host_01:
+        host_02:
+        host_03:
+        host_04:
+        host_05:
+        host_06:
+        host_07:
+        host_08:
     # 管理サーバー
     admin_hosts:
+      children:
+        host_01:
+    # node.js アプリ
+    nodejs_hosts:
       children:
         host_01:
     # コンテナ
     container_hosts:
       children:
-        front_hosts:
-        api_hosts:
         rdb_hosts:
         ddb_hosts:
+        front_hosts:
+        api_hosts:
         admin_hosts:
     # コンテナオーケストレーションサーバー
     container_orchestration_hosts:
@@ -241,28 +245,6 @@ all:
     # --------------------
     # 役割別ホストグループ
     # --------------------
-    # 全Webフロントエンドサーバー
-    front_all:
-      children:
-        front_hosts:
-      vars:
-        is_front_server: true
-    # 全WebAPIサーバー
-    api_all:
-      children:
-        api_hosts:
-      vars:
-        is_api_server: true
-    # 全Webサーバー
-    web_all:
-      children:
-        front_all:
-        api_all:
-      vars:
-        is_web_server: true
-        is_rdb_client: true
-        is_ddb_client: true
-        is_cache_client: true
     # 全RDBサーバー
     rdb_all:
       children:
@@ -291,12 +273,36 @@ all:
         cache_replica_hosts:
       vars:
         is_cache_server: true
+    # 全Webフロントエンドサーバー
+    front_all:
+      children:
+        front_hosts:
+      vars:
+        is_front_server: true
+    # 全WebAPIサーバー
+    api_all:
+      children:
+        api_hosts:
+      vars:
+        is_api_server: true
     # 全管理サーバー
     admin_all:
       children:
         admin_hosts:
       vars:
         is_admin_server: true
+        is_container_orchestration_client: true
+    # 全Webサーバー
+    web_all:
+      children:
+        front_all:
+        api_all:
+        admin_all:
+      vars:
+        is_web_server: true
+        is_rdb_client: true
+        is_ddb_client: true
+        is_cache_client: true
     # コンテナ
     container_all:
       children:
@@ -312,20 +318,15 @@ all:
     # 全ホスト
     hosts_all:
       children:
-        web_all:
         db_all:
         cache_all:
+        web_all:
+        nodejs_all:
         container_all:
         container_orchestration_all:
     # --------------------
     # パッケージ別ホストグループ
     # --------------------
-    # Ngginx
-    nginx:
-      children:
-        web_all:
-      vars:
-        is_nginx: true
     # MariaDB
     mariadb:
       children:
@@ -350,6 +351,21 @@ all:
         cache_all:
       vars:
         is_redis: true
+    # Nginx
+    nginx:
+      children:
+        web_all:
+      vars:
+        is_nginx: true
+        is_rdb_client: true
+        is_ddb_client: true
+        is_cache_client: true
+    # Node.js
+    nodejs:
+      children:
+        nodejs_hosts:
+      vars:
+        is_nodejs: true
     # Docker
     docker:
       children:
@@ -474,9 +490,14 @@ all:
     # --------------------
     setup_nginx_server: true
     # --------------------
+    # パッケージ：Node.js設定
+    # --------------------
+    setup_nodejs: true
+    # --------------------
     # パッケージ：コンテナ設定
     # --------------------
     setup_container: true
+    setup_container_orchestration: true
     # --------------------
     # パッケージ：コンテナ設定：Docker
     # --------------------

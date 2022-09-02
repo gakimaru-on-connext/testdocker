@@ -28,10 +28,10 @@
     - "{{ playbook_dir }}/vars/common_vars.yml"
   roles:
     - role: package_dockerswarm_server_setup
-      when: setup_container is defined
-        and setup_container
-        and setup_docker_swarm is defined
-        and setup_docker_swarm
+      when: setup_container_orchestration is defined
+        and setup_container_orchestration
+        and setup_docker_swarm_server is defined
+        and setup_docker_swarm_server
         and is_container_orchestration_server is defined
         and is_container_orchestration_server
 
@@ -44,10 +44,10 @@
     - "{{ playbook_dir }}/vars/common_vars.yml"
   roles:
     - role: package_dockerswarm_client_setup
-      when: setup_container is defined
-        and setup_container
-        and setup_docker_swarm is defined
-        and setup_docker_swarm
+      when: setup_container_orchestration is defined
+        and setup_container_orchestration
+        and setup_docker_swarm_client is defined
+        and setup_docker_swarm_client
         and is_container_orchestration_client is defined
         and is_container_orchestration_client
 

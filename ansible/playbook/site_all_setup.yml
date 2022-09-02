@@ -9,6 +9,7 @@
 - import_playbook: playbook_package_mongodb_setup.yml
 - import_playbook: playbook_package_redis_setup.yml
 - import_playbook: playbook_package_nginx_setup.yml
+- import_playbook: playbook_package_nodejs_setup.yml
 - import_playbook: playbook_package_docker_setup.yml
 
 # ------------------------------------------------------------

@@ -1,28 +1,6 @@
     # --------------------
     # 役割別ホストグループ
     # --------------------
-    # 全Webフロントエンドサーバー
-    front_all:
-      children:
-        front_hosts:
-      vars:
-        is_front_server: true
-    # 全WebAPIサーバー
-    api_all:
-      children:
-        api_hosts:
-      vars:
-        is_api_server: true
-    # 全Webサーバー
-    web_all:
-      children:
-        front_all:
-        api_all:
-      vars:
-        is_web_server: true
-        is_rdb_client: true
-        is_ddb_client: true
-        is_cache_client: true
     # 全RDBサーバー
     rdb_all:
       children:
@@ -51,12 +29,36 @@
         cache_replica_hosts:
       vars:
         is_cache_server: true
+    # 全Webフロントエンドサーバー
+    front_all:
+      children:
+        front_hosts:
+      vars:
+        is_front_server: true
+    # 全WebAPIサーバー
+    api_all:
+      children:
+        api_hosts:
+      vars:
+        is_api_server: true
     # 全管理サーバー
     admin_all:
       children:
         admin_hosts:
       vars:
         is_admin_server: true
+        is_container_orchestration_client: true
+    # 全Webサーバー
+    web_all:
+      children:
+        front_all:
+        api_all:
+        admin_all:
+      vars:
+        is_web_server: true
+        is_rdb_client: true
+        is_ddb_client: true
+        is_cache_client: true
     # コンテナ
     container_all:
       children:
@@ -72,20 +74,15 @@
     # 全ホスト
     hosts_all:
       children:
-        web_all:
         db_all:
         cache_all:
+        web_all:
+        nodejs_all:
         container_all:
         container_orchestration_all:
     # --------------------
     # パッケージ別ホストグループ
     # --------------------
-    # Ngginx
-    nginx:
-      children:
-        web_all:
-      vars:
-        is_nginx: true
     # MariaDB
     mariadb:
       children:
@@ -110,6 +107,21 @@
         cache_all:
       vars:
         is_redis: true
+    # Nginx
+    nginx:
+      children:
+        web_all:
+      vars:
+        is_nginx: true
+        is_rdb_client: true
+        is_ddb_client: true
+        is_cache_client: true
+    # Node.js
+    nodejs:
+      children:
+        nodejs_hosts:
+      vars:
+        is_nodejs: true
     # Docker
     docker:
       children:
