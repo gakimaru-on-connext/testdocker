@@ -8,11 +8,14 @@ dnf -y install docker-ce --allowerasing
 
 usermod -aG docker vagrant
 
-PEM_SRC=/vagrant/docker/ca
-PEM_DST=/opt/docker/ca
+PEM_SRC=/vagrant/setup/config/docker/cert
+PEM_DST=/opt/docker/cert
 mkdir -p $PEM_DST
 chmod 500 $PEM_DST
-/bin/cp -f $PEM_SRC/ca.pem $PEM_SRC/server-cert.pem $PEM_SRC/server-key.pem $PEM_DST/.
+/bin/cp -f $PEM_SRC/ca.pem \
+           $PEM_SRC/server-cert.pem \
+           $PEM_SRC/server-key.pem \
+           $PEM_DST/.
 chmod 400 $PEM_DST/*
 ls -lat $PEM_DST
 
