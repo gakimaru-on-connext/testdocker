@@ -55,14 +55,13 @@
             # ------------------------------------------------------------
             - name: Setup server cert
               ansible.builtin.copy:
-                src: "{{ item }}"
-                dest: "{{ docker_cert_path }}/."
+                src: "{{ item.src }}.pem"
+                dest: "{{ docker_cert_path }}/{{ item.dst }}.pem"
                 mode: "0400"
               with_items:
-                - ca.pem
-                - server-cert.pem
-                - server-key.pem
-                #- cert.pem
+                - { src: ca, dst: ca }
+                - { src: server-cert, dst: server-cert }
+                - { src: server-key, dst: server-key }
 
             # ------------------------------------------------------------
             # End of [Server block]
@@ -78,12 +77,13 @@
             # ------------------------------------------------------------
             - name: Setup clint cert
               ansible.builtin.copy:
-                src: "{{ item }}"
-                dest: "{{ docker_cert_path }}/."
+                src: "{{ item.src }}.pem"
+                dest: "{{ docker_cert_path }}/{{ item.dst }}.pem"
                 mode: "0444"
               with_items:
-                - ca.pem
-                - cert.pem
+                - { src: ca, dst: ca }
+                - { src: client-cert, dst: cert }
+                - { src: client-key, dst: key }
 
             # ------------------------------------------------------------
             # End of [Client block]

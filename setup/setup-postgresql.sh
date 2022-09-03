@@ -49,7 +49,7 @@ systemctl restart postgresql-14
 firewall-cmd --add-port=5432/tcp --permanent
 firewall-cmd --reload
 
-# client
+# client(mac)
 # $ brew install libpq
 # $ echo 'export PATH=$PATH:/usr/local/opt/libpq/bin' >> ~/.zshrc
 # $ psql -U admin -h 192.168.56.10 -d postgres

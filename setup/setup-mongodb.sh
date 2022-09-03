@@ -23,6 +23,6 @@ systemctl status mongod
 firewall-cmd --add-port=27017/tcp --permanent
 firewall-cmd --reload
 
-# install client on mac
+# client(mac)
 # $ brew install mongsh
 # $ mongosh 192.168.56.10

@@ -4,47 +4,65 @@
 
 $ cd /vagrant/setup/config/docker
 
-$ mkdir -p ca server-cert client-cert
+$ mkdir -p ca
+$ cd ca
 
-$ openssl genrsa -aes256 -out ca/ca-key.pem 4096
+# for server cert
+
+$ openssl genrsa -aes256 -out ca-key.pem 4096
 Enter PEM pass phrase: <--- pass
 Verifying - Enter PEM pass phrase: <--- pass
 
-$ openssl req -new -x509 -days 3650 -key ca/ca-key.pem -sha256 -out server-cert/ca.pem
-Enter pass phrase for ca/ca-key.pem: <--- pass
+$ openssl req -new -x509 -days 3650 -key ca-key.pem -sha256 -out ca.pem
+Enter pass phrase for ca-key.pem: <--- pass
 -----
 Country Name (2 letter code) [XX]: <--- JP
 State or Province Name (full name) []: <--- Niigata
 Locality Name (eg, city) [Default City]: <--- Murakami
 Organization Name (eg, company) [Default Company Ltd]: <--- on-connext
 Organizational Unit Name (eg, section) []: <--- Development
-Common Name (eg, your name or your server's hostname) []: <--- testdocker
+Common Name (eg, your name or your server's hostname) []: <--- testdocker.localdomain
 Email Address []: <--- vagrant@testdocker.localdomain
 
-$ openssl genrsa -out server-cert/server-key.pem 4096
+$ openssl genrsa -out server-key.pem 4096
 
-$ openssl req -subj "/CN=testdocker.localdomain" -sha256 -new -key server-cert/server-key.pem -out ca/server.csr
+$ openssl req -subj "/CN=testdocker.localdomain" -sha256 -new -key server-key.pem -out server.csr
 
-$ echo subjectAltName = IP:127.0.0.1,IP:192.168.56.10,IP:192.168.56.11,IP:192.168.56.12,IP:192.168.56.13,IP:192.168.56.14,IP:192.168.56.15,IP:192.168.56.16,IP:192.168.56.17 > ca/server-extfile.cnf
+$ echo subjectAltName = IP:192.168.56.10,IP:127.0.0.1 > server-extfile.cnf
 
-$ openssl x509 -req -days 3650 -sha256 -in ca/server.csr -CA server-cert/ca.pem -CAkey ca/ca-key.pem -CAcreateserial -out server-cert/server-cert.pem -extfile ca/server-extfile.cnf
-Enter pass phrase for ca/ca-key.pem: <--- pass
-
-$ openssl genrsa -out ca/key.pem 4096
-
-$ openssl req -subj '/CN=client' -new -key ca/key.pem -out ca/client.csr
-
-$ echo extendedKeyUsage = clientAuth > ca/client-extfile.cnf
-
-$ openssl x509 -req -days 365 -sha256 -in ca/client.csr -CA server-cert/ca.pem -CAkey ca/ca-key.pem -CAcreateserial -out client-cert/cert.pem -extfile ca/client-extfile.cnf
-Enter pass phrase for ca/ca-key.pem: <--- pass
+$ openssl x509 -req -days 3650 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem -extfile server-extfile.cnf
+Enter pass phrase for ca-key.pem: <--- pass
 
 $ sudo mkdir -p /opt/docker/cert
-$ sudo cp server-cert/*.pem /opt/docker/cert/.
-$ sudo chmod -v 0400 /opt/docker/cert/*.pem
+$ sudo cp -f ca.pem server-cert.pem server-key.pem /opt/docker/cert/.
+$ sudo -s
+$ chmod -v 0400 /opt/docker/cert/*.pem
+$ exit
 
 # for /usr/lib/systemd/system/docker.servive
-dockerd --tlsverify --tlscacert=/opt/docker/cert/ca.pem --tlscert=/opt/docker/cert/server-cert.pem --tlskey=/opt/docker/cert/server-key.pem -H=0.0.0.0:2376 --containerd
+ExecStart=/usr/bin/dockerd -H fd:// --tlsverify --tlscacert=/opt/docker/cert/ca.pem --tlscert=/opt/docker/cert/server-cert.pem --tlskey=/opt/docker/cert/server-key.pem -H tcp://0.0.0.0:2376 --containerd=/run/containerd/containerd.sock
 
-$ cp server-cert/ca.pem client-cert/.
-$ chmod -v 0400 client-cert/*.pem
+# for client cert
+
+$ openssl genrsa -out client-key.pem 4096
+
+$ openssl req -subj '/CN=client' -new -key client-key.pem -out client.csr
+
+$ echo extendedKeyUsage = clientAuth > client-extfile.cnf
+
+$ openssl x509 -req -days 3650 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out client-cert.pem -extfile client-extfile.cnf
+Enter pass phrase for ca-key.pem: <--- pass
+
+$ mkdir -p ~/.docker
+$ chmod -v 0700 ~/.docker
+$ cp -f ca.pem ~/.docker/.
+$ cp -f client-key.pem ~/.docker/key.pem
+$ cp -f client-cert.pem ~/.docker/cert.pem
+$ chmod -v 0500 ~/.docker
+$ chmod -v 0400 ~/.docker/*.pem
+
+$ export DOCKER_TLS_VERIFY=1
+$ export DOCKER_CERT_PATH=/home/vagrant/.docker
+$ export DOCKER_MACHINE_NAME=testdocker
+$ export DOCKER_HOST=tcp://192.168.56.10:2376
+$ docker version

@@ -29,11 +29,15 @@ systemctl status docker
 firewall-cmd --add-port=2376/tcp --permanent
 firewall-cmd --reload
 
-# ~/.zshrc of docker client(mac)
+# client(mac)
 # $ brew install docker   ※注）cask ではない（cask は Docker Desktop）
 # $ brew install docker-compose
-export DOCKER_TLS_VERIFY="1"
-export DOCKER_HOST="tcp://192.168.56.10:2376"
-export DOCKER_CERT_PATH=".../testdocker/setup/config/docker/client-cert"
-export DOCKER_MACHINE_NAME="testdocker"
-# $ docker
+# $ mkdir -p ~/.docker/testdocker
+# $ cp setup/config/docker/ca/ca.pem ~/.docker/testdocker/.
+# $ cp setup/config/docker/ca/client-cert.pem ~/.docker/testdocker/cert.pem
+# $ cp setup/config/docker/ca/client-key.pem ~/.docker/testdocker/key.pem
+# $ export DOCKER_TLS_VERIFY="1"
+# $ export DOCKER_HOST="tcp://192.168.56.10:2376"
+# $ export DOCKER_CERT_PATH="$HOME/.docker/testdocker"
+# $ export DOCKER_MACHINE_NAME="testdocker"
+# $ docker version

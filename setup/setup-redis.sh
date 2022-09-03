@@ -18,6 +18,6 @@ systemctl restart redis
 firewall-cmd --add-port=6379/tcp --permanent
 firewall-cmd --reload
 
-# client
+# client(mac)
 # $ brew install redis
 # $ redis-cli -h 192.168.56.10

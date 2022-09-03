@@ -116,10 +116,6 @@
       when: host_name is defined
         and host_name != ""
 
-    - name: x
-      debug:
-        msg: "{{ lookup('ansible.builtin.env', 'LANG') }} == {{ os_locale }}"
-
     # ------------------------------------------------------------
     - name: Set locale
       ansible.builtin.command: "localectl set-locale LANG={{ os_locale }}"

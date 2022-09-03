@@ -50,6 +50,6 @@ EOD
 firewall-cmd --add-port=3306/tcp --permanent
 firewall-cmd --reload
 
-# client
+# client(mac)
 # $ brew install mysql-client
 # $ mysql -u admin -h 192.168.56.10 --password=hogehoge mysql
