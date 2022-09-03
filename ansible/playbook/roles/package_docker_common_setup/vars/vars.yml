@@ -1,0 +1,8 @@
+# ------------------------------------------------------------
+# ansible/playbook/roles/package_docker_common_setup/vars/vars.yml
+
+---
+docker_cert_path: /opt/docker/cert
+
+# ------------------------------------------------------------
+# EOF

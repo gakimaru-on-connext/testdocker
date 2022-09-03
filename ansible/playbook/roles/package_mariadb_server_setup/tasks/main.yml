@@ -79,13 +79,21 @@
         # End of [RedHat 9 type block]
 
     # ----------------------------------------------------------
-    - name: Setup root user password
+    - name: Setup root user password 1
       # community.mysql.mysql_query:
       #   login_user: "{{ mariadb_root_user }}"
       #   login_password: "{{ mariadb_root_password }}"
       #   login_db: mysql
       #   query: SET PASSWORD FOR "{{ mariadb_root_user }}"@"localhost" = PASSWORD("{{ mariadb_root_password }}");
       ansible.builtin.command: "mysql mysql -e'SET PASSWORD FOR \"{{ mariadb_root_user }}\"@\"localhost\" = PASSWORD(\"{{ mariadb_root_password }}\")'"
+      args:
+        creates: "{{ already_root_password_path_v10 }}"
+
+    # ----------------------------------------------------------
+    - name: Setup root user password 2
+      ansible.builtin.file:
+        path: "{{ already_root_password_path_v10 }}"
+        state: touch
 
     # ----------------------------------------------------------
     - name: Setup admin db
@@ -119,7 +127,7 @@
         login_user: "{{ mariadb_root_user }}"
         login_password: "{{ mariadb_root_password }}"
         # check_implicit_admin: true
-        name: ''
+        name: ""
         host_all: true
         state: absent
 

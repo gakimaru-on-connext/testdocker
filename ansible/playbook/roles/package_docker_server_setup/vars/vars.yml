@@ -1,7 +1,8 @@
 # ------------------------------------------------------------
-# ansible/playbook/roles/package_docker_setup/tasks/main.yml
+# ansible/playbook/roles/package_docker_server_setup/vars/vars.yml
 
 ---
+service_path: /usr/lib/systemd/system/docker.service
 
 # ------------------------------------------------------------
 # EOF

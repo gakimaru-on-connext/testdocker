@@ -6,6 +6,8 @@
 - name: Import mongodb common setup role
   ansible.builtin.import_role:
     name: package_mongodb_common_setup
+  vars:
+    target: server
 
 - name: Include vars
   ansible.builtin.include_vars: vars.yml
@@ -52,20 +54,21 @@
             state: enabled
 
         # ----------------------------------------------------------
-        - name: Setup bindIp 1
+        - name: Setup bindIp
           ansible.builtin.lineinfile:
             dest: "{{ server_conf_path }}"
-            regexp: "  bindIp: 127\\.0\\.0\\.1"
-            line: "  #bindIp: 127.0.0.1"
+            regexp: "^(  )(bindIp:) (127\\.0\\.0\\.1) (.*)$"
+            line: |
+              \1#\2 \3 \4
+              \1\2 ::,0.0.0.0
+            backrefs: true
           notify: Restart mongodb server
 
-        # ----------------------------------------------------------
-        - name: Setup bindIp 2
-          ansible.builtin.lineinfile:
-            dest: "{{ server_conf_path }}"
-            insertafter: "  #bindIp: 127\\.0\\.0\\.1"
-            line: "  bindIp: ::,0.0.0.0"
-          notify: Restart mongodb server
+        # ------------------------------------------------------------
+        # End of [RedHat 9 type block]
+
+    # ------------------------------------------------------------
+    # End of [Super user block]
 
 # ------------------------------------------------------------
 # EOF

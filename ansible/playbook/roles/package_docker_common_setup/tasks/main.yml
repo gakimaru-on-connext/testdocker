@@ -1,0 +1,98 @@
+# ------------------------------------------------------------
+# ansible/playbook/roles/package_docker_common_setup/tasks/main.yml
+
+---
+
+- name: Include vars
+  ansible.builtin.include_vars: vars.yml
+
+# ------------------------------------------------------------
+# Super user block
+- name: Setup docker common by super user
+  become: true
+  become_user: "{{ become_super_user }}"
+  # ignore_errors: true
+  block:
+
+    # ------------------------------------------------------------
+    # RedHat 9 type on super user block
+    - name: Setup docker common on redhat9 by super user
+      when: ansible_distribution_file_variety == "RedHat"
+        and ansible_distribution_major_version == "9"
+      # ignore_errors: true
+      block:
+
+        # ------------------------------------------------------------
+        - name: Add docker-ce repository
+          command: "dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+          # [NG]
+          # ansible.builtin.dnf:
+          #   conf_file: "https://download.docker.com/linux/centos/docker-ce.repo"
+          #   state: present
+          #   enablerepo: docker-ce
+          # [NG]
+          # ansible.builtin.yum_repository:
+          #   name: docker-ce
+          #   description: docker-ce
+          #   baseurl: "https://download.docker.com/linux/centos/docker-ce.repo"
+          #   enabled: true
+
+        # ------------------------------------------------------------
+        - name: Setup cert
+          ansible.builtin.file:
+            path: "{{ docker_cert_path }}"
+            state: directory
+            mode: "0555"
+
+        # ------------------------------------------------------------
+        # Server block
+        - name: Setup docker server on redhat9 by super user
+          when: target is defined
+            and target == "server"
+          # ignore_errors: true
+          block:
+
+            # ------------------------------------------------------------
+            - name: Setup server cert
+              ansible.builtin.copy:
+                src: "{{ item }}"
+                dest: "{{ docker_cert_path }}/."
+                mode: "0400"
+              with_items:
+                - ca.pem
+                - server-cert.pem
+                - server-key.pem
+                #- cert.pem
+
+            # ------------------------------------------------------------
+            # End of [Server block]
+
+        # ------------------------------------------------------------
+        # Client block
+        - name: Setup docker client on redhat9 by super user
+          when: target is defined
+            and target == "client"
+          # ignore_errors: true
+          block:
+
+            # ------------------------------------------------------------
+            - name: Setup clint cert
+              ansible.builtin.copy:
+                src: "{{ item }}"
+                dest: "{{ docker_cert_path }}/."
+                mode: "0444"
+              with_items:
+                - ca.pem
+                - cert.pem
+
+            # ------------------------------------------------------------
+            # End of [Client block]
+
+        # ------------------------------------------------------------
+        # End of [RedHat 9 type block]
+
+    # ------------------------------------------------------------
+    # End of [Super user block]
+
+# ------------------------------------------------------------
+# EOF

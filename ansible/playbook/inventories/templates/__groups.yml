@@ -47,6 +47,7 @@
         admin_hosts:
       vars:
         is_admin_server: true
+        is_container_client: true
         is_container_orchestration_client: true
     # 全Webサーバー
     web_all:
@@ -64,13 +65,15 @@
       children:
         container_hosts:
       vars:
-        is_container: true
+        is_container_server: true
+        is_container_client: true
     # コンテナオーケストレーション
     container_orchestration_all:
       children:
         container_orchestration_hosts:
       vars:
         is_container_orchestration_server: true
+        is_container_client: true
     # 全ホスト
     hosts_all:
       children:

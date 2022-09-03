@@ -1,4 +1,3 @@
----
 # inventory: ansible/playbook/inventories/vagrant_hosts.yml
 #
 # DO NOT MODIFY this file directly.
@@ -9,6 +8,7 @@
 #   ansible/playbook/inventories/base/_vagrant_hosts.yml
 # and run ansible/inventories_setup.sh
 
+---
 all:
   children:
     # ========================================
@@ -291,6 +291,7 @@ all:
         admin_hosts:
       vars:
         is_admin_server: true
+        is_container_client: true
         is_container_orchestration_client: true
     # 全Webサーバー
     web_all:
@@ -308,13 +309,15 @@ all:
       children:
         container_hosts:
       vars:
-        is_container: true
+        is_container_server: true
+        is_container_client: true
     # コンテナオーケストレーション
     container_orchestration_all:
       children:
         container_orchestration_hosts:
       vars:
         is_container_orchestration_server: true
+        is_container_client: true
     # 全ホスト
     hosts_all:
       children:
@@ -397,9 +400,12 @@ all:
     # OS：基本設定
     # --------------------
     setup_os_base: true
-    with_remi_repository: true
-    with_epel_repository: true
-    upgrade_all_packages: true
+    #with_remi_repository: true
+    #with_epel_repository: true
+    #upgrade_all_packages: true
+    with_remi_repository: false
+    with_epel_repository: false
+    upgrade_all_packages: false
     lang_package: langpacks-ja
     os_locale: ja_JP.UTF-8
     os_timezone: Asia/Tokyo
@@ -497,11 +503,18 @@ all:
     # パッケージ：コンテナ設定
     # --------------------
     setup_container: true
+    setup_container_server: true
+    setup_container_client: true
     setup_container_orchestration: true
+    setup_container_orchestration_server: true
+    setup_container_orchestration_client: true
     # --------------------
     # パッケージ：コンテナ設定：Docker
     # --------------------
     setup_docker: true
+    setup_docker_server: true
+    setup_docker_client: true
+    setup_docker_swarm: true
     setup_docker_swarm_server: true
     setup_docker_swarm_client: true
 

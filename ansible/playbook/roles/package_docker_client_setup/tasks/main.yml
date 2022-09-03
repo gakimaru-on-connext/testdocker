@@ -1,11 +1,20 @@
 # ------------------------------------------------------------
-# ansible/playbook/roles/package_nodejs_server_setup/tasks/main.yml
+# ansible/playbook/roles/package_docker_setup/tasks/main.yml
 
 ---
 
+- name: Import docker common setup role
+  ansible.builtin.import_role:
+    name: package_docker_common_setup
+  vars:
+    target: client
+
+- name: Include common vars
+  ansible.builtin.include_vars: "{{ playbook_dir }}/roles/package_docker_common_setup/vars/vars.yml"
+
 # ------------------------------------------------------------
 # Super user block
-- name: Setup nodejs by super user
+- name: Setup docker cilient by super user
   become: true
   become_user: "{{ become_super_user }}"
   # ignore_errors: true
@@ -13,21 +22,20 @@
 
     # ------------------------------------------------------------
     # RedHat 9 type on super user block
-    - name: Setup nodejs on redhat9 by super user
+    - name: Setup docker cilient on redhat9 by super user
       when: ansible_distribution_file_variety == "RedHat"
         and ansible_distribution_major_version == "9"
       # ignore_errors: true
       block:
 
         # ------------------------------------------------------------
-        - name: Install nodejs
+        - name: Install docker client
           ansible.builtin.dnf:
             name: "{{ item }}"
             # state: latest
             state: present
           with_items:
-            - nodejs
-            - nodejs-yarn
+            - docker-ce-cli
 
         # ------------------------------------------------------------
         # End of [RedHat 9 type block]

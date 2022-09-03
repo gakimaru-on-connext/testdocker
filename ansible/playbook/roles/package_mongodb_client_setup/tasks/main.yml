@@ -6,6 +6,8 @@
 - name: Import mongodb common setup role
   ansible.builtin.import_role:
     name: package_mongodb_common_setup
+  vars:
+    target: client
 
 # ------------------------------------------------------------
 # Super user block
@@ -31,6 +33,12 @@
             state: present
           with_items:
             - mongodb-org-tools
+
+        # ------------------------------------------------------------
+        # End of [RedHat 9 type block]
+
+    # ------------------------------------------------------------
+    # End of [Super user block]
 
 # ------------------------------------------------------------
 # EOF

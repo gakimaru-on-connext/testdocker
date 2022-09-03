@@ -8,7 +8,7 @@ dnf -y install docker-ce --allowerasing
 
 usermod -aG docker vagrant
 
-PEM_SRC=/vagrant/setup/config/docker/cert
+PEM_SRC=/vagrant/setup/config/docker/server-cert
 PEM_DST=/opt/docker/cert
 mkdir -p $PEM_DST
 chmod 500 $PEM_DST
@@ -28,3 +28,12 @@ systemctl status docker
 
 firewall-cmd --add-port=2376/tcp --permanent
 firewall-cmd --reload
+
+# ~/.zshrc of docker client(mac)
+# $ brew install docker   ※注）cask ではない（cask は Docker Desktop）
+# $ brew install docker-compose
+export DOCKER_TLS_VERIFY="1"
+export DOCKER_HOST="tcp://192.168.56.10:2376"
+export DOCKER_CERT_PATH=".../testdocker/setup/config/docker/client-cert"
+export DOCKER_MACHINE_NAME="testdocker"
+# $ docker

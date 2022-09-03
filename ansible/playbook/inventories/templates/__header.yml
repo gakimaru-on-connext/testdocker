@@ -1,4 +1,3 @@
----
 # inventory: ansible/playbook/inventories/$FILE
 #
 # DO NOT MODIFY this file directly.
@@ -9,6 +8,7 @@
 #   ansible/playbook/inventories/base/_$FILE
 # and run ansible/inventories_setup.sh
 
+---
 all:
   children:
     # ========================================

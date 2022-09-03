@@ -46,6 +46,7 @@
     - name: Change project user owner
       ansible.builtin.file:
         path: "{{ item }}"
+        state: directory
         owner: "{{ proj_user }}"
         group: "{{ proj_group }}"
         mode: "u+rwX,go-rwx"

@@ -4,20 +4,46 @@
 ---
 
 # ------------------------------------------------------------
-- name: Setup docker
+- name: Setup docker server
   hosts: docker
   tags: docker
   gather_facts: true
   vars_files:
     - "{{ playbook_dir }}/vars/common_vars.yml"
   roles:
-    - role: package_docker_setup
+    - role: package_docker_server_setup
       when: setup_container is defined
         and setup_container
+        and setup_container_server is defined
+        and setup_container_server
         and setup_docker is defined
         and setup_docker
-        and is_container is defined
-        and is_container
+        and setup_docker_server is defined
+        and setup_docker_server
+        and is_container_server is defined
+        and is_container_server
+        and is_docker is defined
+        and is_docker
+
+# ------------------------------------------------------------
+- name: Setup docker client
+  hosts: all
+  tags: docker
+  gather_facts: true
+  vars_files:
+    - "{{ playbook_dir }}/vars/common_vars.yml"
+  roles:
+    - role: package_docker_client_setup
+      when: setup_container is defined
+        and setup_container
+        and setup_container_client is defined
+        and setup_container_client
+        and setup_docker is defined
+        and setup_docker
+        and setup_docker_client is defined
+        and setup_docker_client
+        and is_container_client is defined
+        and is_container_client
 
 # ------------------------------------------------------------
 - name: Setup docker swarm server
@@ -30,10 +56,16 @@
     - role: package_dockerswarm_server_setup
       when: setup_container_orchestration is defined
         and setup_container_orchestration
+        and setup_container_orchestration_server is defined
+        and setup_container_orchestration_server
+        and setup_docker_swarm is defined
+        and setup_docker_swarm
         and setup_docker_swarm_server is defined
         and setup_docker_swarm_server
         and is_container_orchestration_server is defined
         and is_container_orchestration_server
+        and is_docker_swarm is defined
+        and is_docker_swarm
 
 # ------------------------------------------------------------
 - name: Setup docker swarm cilent
@@ -46,6 +78,10 @@
     - role: package_dockerswarm_client_setup
       when: setup_container_orchestration is defined
         and setup_container_orchestration
+        and setup_container_orchestration_client is defined
+        and setup_container_orchestration_cilent
+        and setup_docker_swarm is defined
+        and setup_docker_swarm
         and setup_docker_swarm_client is defined
         and setup_docker_swarm_client
         and is_container_orchestration_client is defined

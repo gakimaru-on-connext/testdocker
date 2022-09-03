@@ -36,6 +36,17 @@
                 # state: latest
                 state: present
                 enablerepo: epel-release
+              # [NG]
+              # ansible.builtin.yum_repository:
+              #   name: epel-release
+              #   description: epel-release
+              #   enabled: true
+              # [参考]
+              # ansible.builtin.dnf:
+              #   name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+              #   state: present
+              #   enablerepo: epel-release
+              
 
             # ------------------------------------------------------------
             # End of [Add epel repository block]
@@ -58,6 +69,12 @@
                 name: "{{ remi_repository_base_url }}/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
                 state: present
                 enablerepo: remi
+              # [NG]
+              # ansible.builtin.yum_repository:
+              #   name: remi
+              #   description: remi-release
+              #   baseurl: "{{ remi_repository_base_url }}/enterprise/remi-release-{{ ansible_distribution_major_version }}.rpm"
+              #   enabled: true
 
             # ------------------------------------------------------------
             # End of [Add remi repository block]
@@ -87,7 +104,7 @@
             # state: latest
             state: present
           when: lang_package is defined
-            and lang_package != ''
+            and lang_package != ""
 
         # ------------------------------------------------------------
         # End of [RedHat 9 type block]
@@ -97,23 +114,29 @@
       ansible.builtin.hostname:
         name: "{{ host_name }}"
       when: host_name is defined
-        and host_name != ''
+        and host_name != ""
+
+    - name: x
+      debug:
+        msg: "{{ lookup('ansible.builtin.env', 'LANG') }} == {{ os_locale }}"
 
     # ------------------------------------------------------------
     - name: Set locale
+      ansible.builtin.command: "localectl set-locale LANG={{ os_locale }}"
+      when: os_locale is defined
+        and os_locale != ""
+        # and lookup("ansible.builtin.env", "LANG") != (os_locale)
+      # [NG]
       # community.general.locale_gen:
       #   name: "{{ os_locale }}"
       #   state: present
-      ansible.builtin.command: "localectl set-locale LANG={{ os_locale }}"
-      when: os_locale is defined
-        and os_locale != ''
 
     # ------------------------------------------------------------
     - name: Set timezone
       community.general.timezone:
         name: "{{ os_timezone }}"
       when: os_timezone is defined
-        and os_timezone != ''
+        and os_timezone != ""
 
     # ------------------------------------------------------------
     - name: Set pam limits
