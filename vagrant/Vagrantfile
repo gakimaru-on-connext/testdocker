@@ -5,10 +5,10 @@ def install_plugin(plugin)
   system "vagrant plugin install #{plugin}" unless Vagrant.has_plugin? plugin
 end
 
-install_plugin('vagrant-vbguest')
-install_plugin('vagrant-hostmanager')
-install_plugin('sahara')
-install_plugin('vagrant-vbox-snapshot')
+#install_plugin('vagrant-vbguest')
+#install_plugin('vagrant-hostmanager')
+#install_plugin('sahara')
+#install_plugin('vagrant-vbox-snapshot')
 install_plugin('vagrant-docker-compose')
 install_plugin('vagrant-reload')
 
@@ -41,11 +41,11 @@ Vagrant.configure("2") do |config|
   # within the machine from a port on the host machine and only allow access
   # via 127.0.0.1 to disable public access
   # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 80, host: 40080
-  config.vm.network "forwarded_port", guest: 443, host: 40443
-  config.vm.network "forwarded_port", guest: 6379, host: 46379
-  config.vm.network "forwarded_port", guest: 3306, host: 43306, host_ip: "127.0.0.1", auto_correct: true
-  config.vm.network "forwarded_port", guest: 2376, host: 42376, host_ip: "127.0.0.1", auto_correct: true
+  #config.vm.network "forwarded_port", guest: 80, host: 40080
+  #config.vm.network "forwarded_port", guest: 443, host: 40443
+  #config.vm.network "forwarded_port", guest: 6379, host: 46379
+  #config.vm.network "forwarded_port", guest: 3306, host: 43306, host_ip: "127.0.0.1", auto_correct: true
+  #config.vm.network "forwarded_port", guest: 2376, host: 42376, host_ip: "127.0.0.1", auto_correct: true
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -65,7 +65,7 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder "../docker", "/vagrant/docker", type: "rsync"
   config.vm.synced_folder "../setup/config", "/vagrant/setup/config", type: "rsync"
   #config.vm.synced_folder "./share", "/vagrant/share"
-  config.vm.synced_folder "/System/Volumes/Data" + File.expand_path("./share"), "/vagrant/share", type: "nfs", nfs_export: true, nfs_udp: false, nfs_version: 3
+  #config.vm.synced_folder "/System/Volumes/Data" + File.expand_path("./share"), "/vagrant/share", type: "nfs", nfs_export: true, nfs_udp: false, nfs_version: 3
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -84,7 +84,7 @@ Vagrant.configure("2") do |config|
   config.vm.provider :virtualbox do |vb|
     vb.name = "testdocker"
     vb.gui = false
-    vb.memory = "4096"
+    vb.memory = "2048"
     vb.cpus = 4
     vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
@@ -105,14 +105,8 @@ Vagrant.configure("2") do |config|
   #   apt-get install -y apache2
   # SHELL
   #setup_dir = "../setup"
-  #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup-os.sh", reboot: true
-  #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup-mariadb.sh"
-  #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup-postgresql.sh"
-  #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup-mongodb.sh"
-  #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup-redis.sh"
-  #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup-nginx.sh"
-  #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup-nodejs.sh"
-  #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup-docker.sh"
+  #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup_os.sh", reboot: true
+  #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup_package_docker.sh"
   config.vm.provision :ansible do |ansible|
     playbook_dir = "../ansible/playbook"
     ansible.config_file = playbook_dir + "/ansible.cfg"
@@ -121,7 +115,7 @@ Vagrant.configure("2") do |config|
     ansible.limit = 'all'
     #ansible.verbose = "vvv"
     #ansible.tags = "tag1,tag2,..."
-    ansible.tags = "os,docker"
+    #ansible.tags = "os,docker"
   end
   config.vm.provision :docker
   config.vm.provision :reload

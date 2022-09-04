@@ -89,22 +89,22 @@ if [ -z ${SETUP_INVENTORIES+x} ]; then
     fi
 fi
 if [ -z ${BUILD_APP+x} ]; then
-    echo ""
-    echo -n "Appをビルドしますか？(y/n [n]) "
-    read REQUIRED
+    #echo ""
+    #echo -n "Appをビルドしますか？(y/n [n]) "
+    #read REQUIRED
     BUILD_APP=false
-    if [ "$REQUIRED" == "y" ]; then
-        BUILD_APP=true
-    fi
+    #if [ "$REQUIRED" == "y" ]; then
+    #    BUILD_APP=true
+    #fi
 fi
 if [ -z ${UPDATE_APP+x} ]; then
-    echo ""
-    echo -n "Appを更新（デプロイ）しますか？(y/n [n]) "
-    read REQUIRED
+    #echo ""
+    #echo -n "Appを更新（デプロイ）しますか？(y/n [n]) "
+    #read REQUIRED
     UPDATE_APP=false
-    if [ "$REQUIRED" == "y" ]; then
-        UPDATE_APP=true
-    fi
+    #if [ "$REQUIRED" == "y" ]; then
+    #    UPDATE_APP=true
+    #fi
 fi
 
 #export SETUP_INVENTORIES
@@ -117,8 +117,8 @@ fi
 echo ""
 echo "----------------------------------------------------------------------"
 echo SETUP_INVENTORIES=$SETUP_INVENTORIES
-echo BUILD_APP=$BUILD_APP
-echo UPDATE_APP=$UPDATE_APP
+#echo BUILD_APP=$BUILD_APP
+#echo UPDATE_APP=$UPDATE_APP
 echo VERBOSE_OPT=$VERBOSE_OPT
 echo TAGS_OPT=$TAGS_OPT
 
@@ -165,3 +165,14 @@ fi
 echo ""
 echo "----------------------------------------------------------------------"
 echo "Provisioning by ansible"
+
+function force_update_known_hosts() {
+    HOST_NAME=$1
+    VM_NAME=$2
+    KNOWN_HOSTS=~/.ssh/known_hosts
+    if [ -n "$HOST_NAME" -a -n "$VM_NAME" -a -f $KNOWN_HOSTS ]; then
+        echo "Update known_hosts for $HOST_NAME (VM:$VM_NAME)"
+        sed -i -e "/^$HOST_NAME/d" $KNOWN_HOSTS
+        ssh vagrant@$HOST_NAME -i "$VAGRANT_DIR/.vagrant/machines/$VM_NAME/virtualbox/private_key" -o StrictHostKeyChecking=no echo ok > /dev/null 2>&1
+    fi
+}

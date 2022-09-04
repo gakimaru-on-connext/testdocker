@@ -24,7 +24,7 @@
 
         # ------------------------------------------------------------
         - name: Add docker-ce repository
-          command: "dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+          ansible.builtin.command: "dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
           # [NG]
           # ansible.builtin.dnf:
           #   conf_file: "https://download.docker.com/linux/centos/docker-ce.repo"
