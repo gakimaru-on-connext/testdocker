@@ -209,8 +209,8 @@ all:
     # OS：ユーザー設定
     # --------------------
     setup_os_user: true
-    proj_user: test
-    proj_group: test
+    proj_user: vagrant
+    proj_group: vagrant
     proj_groups: "{{ proj_group }}"
     proj_user_home: "/home/{{ proj_user }}"
     proj_user_shell: /bin/bash

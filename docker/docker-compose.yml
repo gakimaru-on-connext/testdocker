@@ -12,7 +12,8 @@ services:
       MYSQL_PASSWORD: hogehoge
       MYSQL_DATABASE: mysql
     volumes:
-      - /opt/rdb1:/var/lib/mysql
+      - /opt/rdb1/mysql:/var/lib/mysql:rw
+      - /opt/rdb1/mysql/log:/var/log/mysql:rw
     #networks:
     #  - backend
   rdb2:
@@ -24,7 +25,8 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: hogehoge
     volumes:
-      - /opt/rdb2:/var/lib/postgresql/data
+      - /opt/rdb2/postgresql/data:/var/lib/postgresql/data:rw
+      - /opt/rdb2/postgresql/log:/var/log/postgresql:rw
     #networks:
     #  - backend
   ddb:
@@ -33,7 +35,8 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - /opt/ddb:/data/db
+      - /opt/ddb/mongodb/db:/data/db:rw
+      - /opt/ddb/mongodb/log:/var/log/mongodb:rw
     #networks:
     #  - backend
   cache:
@@ -41,6 +44,8 @@ services:
     container_name: cache
     ports:
       - "6379:6379"
+    volumes:
+      - /opt/cache/redis/data:/data:rw
     #networks:
     #  - backend
   web:
@@ -54,6 +59,10 @@ services:
       - rdb2
       - ddb
       - cache
+    volumes:
+      - ./web/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./web/nginx/html:/usr/share/nginx/html:ro
+      - /opt/web/nginx/log:/var/log/nginx:rw
     #networks:
     #  - frontend
     #  - backend

@@ -62,10 +62,8 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "./data", "/vagrant_data"
-  #config.vm.synced_folder "../docker", "/vagrant/docker", type: "rsync"
-  #config.vm.synced_folder "../setup/config", "/vagrant/setup/config", type: "rsync"
-  config.vm.synced_folder "../docker", "/vagrant/docker"
-  config.vm.synced_folder "../setup/config", "/vagrant/setup/config"
+  config.vm.synced_folder "../docker", "/vagrant/docker", type: "rsync"
+  config.vm.synced_folder "../setup/config", "/vagrant/setup/config", type: "rsync"
   #config.vm.synced_folder "./share", "/vagrant/share"
   #config.vm.synced_folder "/System/Volumes/Data" + File.expand_path("./share"), "/vagrant/share", type: "nfs", nfs_export: true, nfs_udp: false, nfs_version: 3
 
