@@ -76,6 +76,13 @@
         # End of [RedHat 9 type block]
 
     # ------------------------------------------------------------
+    - name: Add docker group to project user
+      ansible.builtin.user:
+        name: "{{ proj_user }}"
+        groups: "docker"
+        append: true
+
+    # ------------------------------------------------------------
     # End of [Super user block]
 
 # ------------------------------------------------------------
