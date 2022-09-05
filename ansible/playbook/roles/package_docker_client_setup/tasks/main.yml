@@ -38,6 +38,22 @@
             - docker-ce-cli
 
         # ------------------------------------------------------------
+        - name: Copy .bashrc.docker on project user
+          ansible.builtin.template:
+            src: ".bashrc.docker.j2"
+            dest: "{{ proj_user_home }}/.bashrc.docker"
+            owner: "{{ proj_user }}"
+            group: "{{ proj_group }}"
+            mode: "0440"
+
+        # ------------------------------------------------------------
+        - name: Setup .bashrc on project user
+          ansible.builtin.lineinfile:
+            dest: "{{ proj_user_home }}/.bashrc"
+            insertafter: EOF
+            line: "source ~/.bashrc.docker"
+
+        # ------------------------------------------------------------
         # End of [RedHat 9 type block]
 
     # ------------------------------------------------------------

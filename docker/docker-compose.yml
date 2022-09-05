@@ -1,10 +1,86 @@
 version: "3"
 services:
-  nginx:
+  rdb1:
+    image: mariadb/server:latest
+    container_name: rdb1
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ALLOW_EMPTY_PASSWORD: 1
+      #MYSQL_ROOT_PASSWORD: hogehoge
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: hogehoge
+      MYSQL_DATABASE: mysql
+    volumes:
+      - /opt/rdb1:/var/lib/mysql:Z
+    #networks:
+    #  - backend
+  rdb2:
+    image: postgres:latest
+    container_name: rdb2
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: hogehoge
+    volumes:
+      - /opt/rdb2:/var/lib/postgresql/data:Z
+    #networks:
+    #  - backend
+  ddb:
+    image: mongo:latest
+    container_name: ddb
+    ports:
+      - "27017:27017"
+    volumes:
+      - /opt/ddb:/data/db:Z
+    #networks:
+    #  - backend
+  cache:
+    image: redis:latest
+    container_name: cache
+    ports:
+      - "6379:6379"
+    #networks:
+    #  - backend
+  web:
     image: nginx:latest
-    container_name: nginx00
+    container_name: web
     ports:
       - "80:80"
       - "443:443"
-    volumes:
-      - ./default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - rdb1
+      - rdb2
+      - ddb
+      - cache
+    #networks:
+    #  - frontend
+    #  - backend
+  adminer:
+    container_name: adminer
+    hostname: adminer
+    image: adminer:latest
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - rdb1
+      - rdb2
+      - ddb
+    #networks:
+    #  - frontend
+    #  - backend
+#networks:
+#  frontend:
+#    driver: bridge
+#    ipam:
+#      driver: default
+#      config:
+#        - subnet: 192.168.10.0/24
+#  backend:
+#    driver: bridge
+#    ipam:
+#      driver: default
+#      config:
+#        - subnet: 192.168.20.0/24

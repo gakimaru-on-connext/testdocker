@@ -62,8 +62,10 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "./data", "/vagrant_data"
-  config.vm.synced_folder "../docker", "/vagrant/docker", type: "rsync"
-  config.vm.synced_folder "../setup/config", "/vagrant/setup/config", type: "rsync"
+  #config.vm.synced_folder "../docker", "/vagrant/docker", type: "rsync"
+  #config.vm.synced_folder "../setup/config", "/vagrant/setup/config", type: "rsync"
+  config.vm.synced_folder "../docker", "/vagrant/docker"
+  config.vm.synced_folder "../setup/config", "/vagrant/setup/config"
   #config.vm.synced_folder "./share", "/vagrant/share"
   #config.vm.synced_folder "/System/Volumes/Data" + File.expand_path("./share"), "/vagrant/share", type: "nfs", nfs_export: true, nfs_udp: false, nfs_version: 3
 
@@ -117,7 +119,7 @@ Vagrant.configure("2") do |config|
     #ansible.tags = "tag1,tag2,..."
     #ansible.tags = "os,docker"
   end
-  config.vm.provision :docker
+  #config.vm.provision :docker
   config.vm.provision :reload
   config.vm.provision :docker_compose, yml: "/vagrant/docker/docker-compose.yml", run: "always"
 end
