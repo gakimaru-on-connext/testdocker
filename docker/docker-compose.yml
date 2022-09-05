@@ -12,7 +12,7 @@ services:
       MYSQL_PASSWORD: hogehoge
       MYSQL_DATABASE: mysql
     volumes:
-      - /opt/rdb1:/var/lib/mysql:Z
+      - /opt/rdb1:/var/lib/mysql
     #networks:
     #  - backend
   rdb2:
@@ -24,7 +24,7 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: hogehoge
     volumes:
-      - /opt/rdb2:/var/lib/postgresql/data:Z
+      - /opt/rdb2:/var/lib/postgresql/data
     #networks:
     #  - backend
   ddb:
@@ -33,7 +33,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - /opt/ddb:/data/db:Z
+      - /opt/ddb:/data/db
     #networks:
     #  - backend
   cache:
