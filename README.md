@@ -15,7 +15,7 @@
 - [■Docker Compose 操作方法](#docker-compose-操作方法)
 - [■シェルスクリプトによる Docker プロビジョニングを行う場合](#シェルスクリプトによる-docker-プロビジョニングを行う場合)
 - [■Ansible による Docker プロビジョニングを行う場合](#ansible-による-docker-プロビジョニングを行う場合)
-- [■セキュアな　Docker 操作方法](#セキュアなdocker-操作方法)
+- [■セキュアな Docker 操作方法](#セキュアな-docker-操作方法)
 - [■ディレクトリ構成](#ディレクトリ構成)
 
 ---
@@ -232,7 +232,7 @@
   $ vagrant ssh
   ```
 
-- VM(ubuntu)
+- VM
 
   ```shell
   # docker コマンドを実行（何かしらのサブコマンドを指定すると、Docker サーバーにアクセスする）
@@ -267,7 +267,7 @@
   $ vagrant ssh
   ```
 
-- VM(ubuntu)
+- VM
 
   ```shell
   # /usr/lib/systemd/system/docker.service をテキストエディタで編集
@@ -449,7 +449,7 @@ $ docker image rm (コンテナイメージID)
   $ vagrant ssh
   ```
 
-- VM(ubuntu)
+- VM
 
   ```shell
   # docker-compose.yml が存在するディレクトリに移動
@@ -502,7 +502,7 @@ Creating adminer ... done
 Creating web     ... done
 Attaching to cache, rdb2, ddb, rdb1, adminer, web
 ...
-# [ctrl] + c を入力
+# Ctrl+C を入力
 Gracefully stopping... (press Ctrl+C again to force)
 Stopping adminer ... done
 Stopping web     ... done
@@ -594,12 +594,16 @@ $ docker-compose kill (サービス名)
 ---
 ## ■シェルスクリプトによる Docker プロビジョニングを行う場合
 
+- Docker 自体のインストールとセットアップを Vagrant の docker プロビジョナーに任せず、独自に実施する方法
+
 <!-- omit in toc -->
 ### ▼Vagrant プロビジョニング設定
 - [testvagrant](https://github.com/gakimaru-on-connext/testvagrant#%E8%A7%A3%E8%AA%AC%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0) 参照
 
 ---
 ## ■Ansible による Docker プロビジョニングを行う場合
+
+- Docker 自体のインストールとセットアップを Vagrant の docker プロビジョナーに任せず、独自に実施する方法
 
 <!-- omit in toc -->
 ### ▼Vagrant プロビジョニング設定
@@ -617,19 +621,19 @@ $ docker-compose kill (サービス名)
 - [testansible](https://github.com/gakimaru-on-connext/testansible#ansible-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E5%AE%9F%E8%A1%8C) 参照
 
 ---
-## ■セキュアな　Docker 操作方法
+## ■セキュアな Docker 操作方法
 
-- シェルスクリプトまたは Ansible による Docker プロビジョニングを行った場合の Docker 操作方法
-- これらのセットアップでは、Docker サーバーのアクセスにSSL通信を用いるように構成している
-  - docker-machine コマンドで Docker コンテナホストをセットアップした場合と同様の状態になる
+- Docker コマンドによる Docker サーバー操作は SSL 通信に対応している
+  - 例えば、docker-machine コマンドで Docker コンテナホストをセットアップした場合は SSL通信設定が行われる
+- 前述のシェルスクリプトまたは Ansible による Docker プロビジョニングを行った場合は、Docker サーバーにSSL通信が設定されるように構成している
 
 <!-- omit in toc -->
-### ▼docker コマンドの実行方法１：VM にログインして docker コマンドを実行
+### ▼セキュアな docker コマンドの実行方法１：VM にログインして docker コマンドを実行
 
 - [■Docker 操作方法](#docker-操作方法) と同じ
 
 <!-- omit in toc -->
-### ▼docker コマンドの実行方法2：macOS から　docker コマンドを実行
+### ▼セキュアな docker コマンドの実行方法2：macOS から　docker コマンドを実行
 
 <!-- omit in toc -->
 #### ▽準備

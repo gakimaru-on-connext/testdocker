@@ -96,7 +96,7 @@
 <li><a href="#docker-compose-%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">■Docker Compose 操作方法</a></li>
 <li><a href="#%E3%82%B7%E3%82%A7%E3%83%AB%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%81%AB%E3%82%88%E3%82%8B-docker-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%92%E8%A1%8C%E3%81%86%E5%A0%B4%E5%90%88">■シェルスクリプトによる Docker プロビジョニングを行う場合</a></li>
 <li><a href="#ansible-%E3%81%AB%E3%82%88%E3%82%8B-docker-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%92%E8%A1%8C%E3%81%86%E5%A0%B4%E5%90%88">■Ansible による Docker プロビジョニングを行う場合</a></li>
-<li><a href="#%E3%82%BB%E3%82%AD%E3%83%A5%E3%82%A2%E3%81%AAdocker-%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">■セキュアな　Docker 操作方法</a></li>
+<li><a href="#%E3%82%BB%E3%82%AD%E3%83%A5%E3%82%A2%E3%81%AA-docker-%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">■セキュアな Docker 操作方法</a></li>
 <li><a href="#%E3%83%87%E3%82%A3%E3%83%AC%E3%82%AF%E3%83%88%E3%83%AA%E6%A7%8B%E6%88%90">■ディレクトリ構成</a></li>
 </ul>
 <hr>
@@ -340,7 +340,7 @@
 </div></code></pre>
 </li>
 <li>
-<p>VM(ubuntu)</p>
+<p>VM</p>
 <pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> docker コマンドを実行（何かしらのサブコマンドを指定すると、Docker サーバーにアクセスする）</span>
 <span class="hljs-meta">$</span><span class="bash"> docker version</span>
 Client: Docker Engine - Community
@@ -373,7 +373,7 @@ Engine:
 </div></code></pre>
 </li>
 <li>
-<p>VM(ubuntu)</p>
+<p>VM</p>
 <pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> /usr/lib/systemd/system/docker.service をテキストエディタで編集</span>
 <span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> /usr/lib/systemd/system</span>
 <span class="hljs-meta">$</span><span class="bash"> sudo vi docker.service  または  $ sudo nano docker.service</span>
@@ -523,7 +523,7 @@ mariadb/server   latest    763362775627   16 months ago   362MB
 </div></code></pre>
 </li>
 <li>
-<p>VM(ubuntu)</p>
+<p>VM</p>
 <pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> docker-compose.yml が存在するディレクトリに移動</span>
 cd /vagrant/docker/
 <span class="hljs-meta">#</span><span class="bash"> docker-compose コマンドを実行（何かしらのサブコマンドを指定すると、Docker サーバーにアクセスする）</span>
@@ -570,7 +570,7 @@ Creating adminer ... done
 Creating web     ... done
 Attaching to cache, rdb2, ddb, rdb1, adminer, web
 ...
-<span class="hljs-meta">#</span><span class="bash"> [ctrl] + c を入力</span>
+<span class="hljs-meta">#</span><span class="bash"> Ctrl+C を入力</span>
 Gracefully stopping... (press Ctrl+C again to force)
 Stopping adminer ... done
 Stopping web     ... done
@@ -640,6 +640,9 @@ Removing network docker_default
 </div></code></pre>
 <hr>
 <h2 id="シェルスクリプトによる-docker-プロビジョニングを行う場合">■シェルスクリプトによる Docker プロビジョニングを行う場合</h2>
+<ul>
+<li>Docker 自体のインストールとセットアップを Vagrant の docker プロビジョナーに任せず、独自に実施する方法</li>
+</ul>
 <!-- omit in toc -->
 <h3 id="vagrant-プロビジョニング設定">▼Vagrant プロビジョニング設定</h3>
 <ul>
@@ -647,6 +650,9 @@ Removing network docker_default
 </ul>
 <hr>
 <h2 id="ansible-による-docker-プロビジョニングを行う場合">■Ansible による Docker プロビジョニングを行う場合</h2>
+<ul>
+<li>Docker 自体のインストールとセットアップを Vagrant の docker プロビジョナーに任せず、独自に実施する方法</li>
+</ul>
 <!-- omit in toc -->
 <h3 id="vagrant-プロビジョニング設定-1">▼Vagrant プロビジョニング設定</h3>
 <ul>
@@ -663,22 +669,22 @@ Removing network docker_default
 <li><a href="https://github.com/gakimaru-on-connext/testansible#ansible-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E5%AE%9F%E8%A1%8C">testansible</a> 参照</li>
 </ul>
 <hr>
-<h2 id="セキュアなdocker-操作方法">■セキュアな　Docker 操作方法</h2>
+<h2 id="セキュアな-docker-操作方法">■セキュアな Docker 操作方法</h2>
 <ul>
-<li>シェルスクリプトまたは Ansible による Docker プロビジョニングを行った場合の Docker 操作方法</li>
-<li>これらのセットアップでは、Docker サーバーのアクセスにSSL通信を用いるように構成している
+<li>Docker コマンドによる Docker サーバー操作は SSL 通信に対応している
 <ul>
-<li>docker-machine コマンドで Docker コンテナホストをセットアップした場合と同様の状態になる</li>
+<li>例えば、docker-machine コマンドで Docker コンテナホストをセットアップした場合は SSL通信設定が行われる</li>
 </ul>
 </li>
+<li>前述のシェルスクリプトまたは Ansible による Docker プロビジョニングを行った場合は、Docker サーバーにSSL通信が設定されるように構成している</li>
 </ul>
 <!-- omit in toc -->
-<h3 id="docker-コマンドの実行方法１vm-にログインして-docker-コマンドを実行-1">▼docker コマンドの実行方法１：VM にログインして docker コマンドを実行</h3>
+<h3 id="セキュアな-docker-コマンドの実行方法１vm-にログインして-docker-コマンドを実行">▼セキュアな docker コマンドの実行方法１：VM にログインして docker コマンドを実行</h3>
 <ul>
 <li><a href="#docker-%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">■Docker 操作方法</a> と同じ</li>
 </ul>
 <!-- omit in toc -->
-<h3 id="docker-コマンドの実行方法2macos-からdocker-コマンドを実行-1">▼docker コマンドの実行方法2：macOS から　docker コマンドを実行</h3>
+<h3 id="セキュアな-docker-コマンドの実行方法2macos-からdocker-コマンドを実行">▼セキュアな docker コマンドの実行方法2：macOS から　docker コマンドを実行</h3>
 <!-- omit in toc -->
 <h4 id="準備-2">▽準備</h4>
 <ul>
