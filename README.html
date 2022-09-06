@@ -96,22 +96,22 @@
 <li><a href="#docker-compose-%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">■Docker Compose 操作方法</a></li>
 <li><a href="#%E3%82%B7%E3%82%A7%E3%83%AB%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%81%AB%E3%82%88%E3%82%8B-docker-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%92%E8%A1%8C%E3%81%86%E5%A0%B4%E5%90%88">■シェルスクリプトによる Docker プロビジョニングを行う場合</a></li>
 <li><a href="#ansible-%E3%81%AB%E3%82%88%E3%82%8B-docker-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%92%E8%A1%8C%E3%81%86%E5%A0%B4%E5%90%88">■Ansible による Docker プロビジョニングを行う場合</a></li>
+<li><a href="#docker-%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95%EF%BC%92">■Docker 操作方法（２）</a></li>
 <li><a href="#%E3%83%87%E3%82%A3%E3%83%AC%E3%82%AF%E3%83%88%E3%83%AA%E6%A7%8B%E6%88%90">■ディレクトリ構成</a></li>
 </ul>
 <hr>
 <h2 id="概要">■概要</h2>
 <ul>
 <li>Vagrant を用いた VM 上へのOSセットアップのテスト</li>
-<li>Docker（Docker Compose） によるセットアップを行う</li>
-<li>Docker 自体のセットアップも Vagrant に任せた構成</li>
-<li>シェル（スクリプト）によるセットアップと比較するためのリポジトリも用意
+<li>OS 以外のパッケージは Docker（Docker Compose） で扱う
 <ul>
-<li><a href="https://github.com/gakimaru-on-connext/testvagrant">https://github.com/gakimaru-on-connext/testvagrant</a></li>
+<li>Docker を単独で利用するよりも、Docker Compose を利用する方がシンプルに構成できる</li>
 </ul>
 </li>
-<li>Ansible によるセットアップと比較するためのリポジトリも用意
+<li>シェル（スクリプト）または Ansible によるセットアップと比較するためのリポジトリも用意
 <ul>
-<li><a href="https://github.com/gakimaru-on-connext/testansible">https://github.com/gakimaru-on-connext/testansible</a></li>
+<li>シェルスクリプト：<a href="https://github.com/gakimaru-on-connext/testvagrant">https://github.com/gakimaru-on-connext/testvagrant</a></li>
+<li>Ansible：<a href="https://github.com/gakimaru-on-connext/testansible">https://github.com/gakimaru-on-connext/testansible</a></li>
 </ul>
 </li>
 </ul>
@@ -133,15 +133,16 @@
 </div></code></pre>
 </li>
 <li>
-<p>Docker(クライアント用のコマンドラインツール) ※macOS 上から Docker を操作したい場合に必要（必須ではない）</p>
+<p>（必須ではない）Docker クライアント用コマンドラインツール</p>
 <pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> brew install docker</span>
 </div></code></pre>
 <ul>
 <li>注）cask ではないので注意
 <ul>
-<li>brew install --cask docker としてしまうと、Docker Engine をインストールしてしまう</li>
+<li>brew install --cask docker としてしまうと、コマンドラインツールではなく、GUI ツールの Docker Engine をインストールしてしまうので注意</li>
 </ul>
 </li>
+<li>macOS 上から Docker を操作したい場合に必要</li>
 </ul>
 </li>
 </ul>
@@ -210,21 +211,21 @@
 <p>Vagrantfile</p>
 <ul>
 <li>
-<p>Docker Compose 用プラグインのインストール</p>
+<p>プラグインインストール設定：Docker Compose 操作</p>
 <pre><code class="language-ruby"><div>install_plugin(<span class="hljs-string">&#x27;vagrant-docker-compose&#x27;</span>)
 </div></code></pre>
 </li>
 <li>
-<p>OSイメージ</p>
+<p>OSイメージ設定：ubuntu22.04</p>
 <pre><code class="language-ruby"><div>config.vm.box = <span class="hljs-string">&quot;generic/ubuntu2204&quot;</span>
 </div></code></pre>
 <ul>
-<li>&quot;generic/rocky9&quot; では、Docker のインストールに対応していなかったため</li>
+<li>&quot;generic/rocky9&quot; では、Vagrant による Docker のインストールに対応していなかったため ubuntu2204 を使用</li>
 <li>シェルスクリプトやAnsibleによるセットアップに切り替える場合は、&quot;generic/rocky9&quot; に変更する必要あり</li>
 </ul>
 </li>
 <li>
-<p>Docker Compose 設定および Docker コンテナ用設定ファイルの共有</p>
+<p>Docker Compose 設定および Docker コンテナ用設定ファイルの共有設定</p>
 <pre><code class="language-ruby"><div>config.vm.synced_folder <span class="hljs-string">&quot;../docker&quot;</span>, <span class="hljs-string">&quot;/vagrant/docker&quot;</span>, <span class="hljs-symbol">type:</span> <span class="hljs-string">&quot;rsync&quot;</span>
 </div></code></pre>
 </li>
@@ -233,7 +234,7 @@
 <pre><code class="language-ruby"><div>config.vm.provision <span class="hljs-symbol">:docker</span>
 </div></code></pre>
 <ul>
-<li>:docker は、本来は Docker の操作を行うプロビジョナーだが、ここでは Docker のインストールにしか使用しないため、設定内容はこれだけ</li>
+<li>docker プロビジョナーは、本来は Docker の操作を行うプロビジョナーだが、ここでは Docker のインストールにしか使用しないため、設定内容は空で良い</li>
 </ul>
 </li>
 <li>
@@ -241,7 +242,7 @@
 <pre><code class="language-ruby"><div>config.vm.provision <span class="hljs-symbol">:docker_compose</span>, <span class="hljs-symbol">yml:</span> <span class="hljs-string">&quot;/vagrant/docker/docker-compose.yml&quot;</span>, <span class="hljs-symbol">run:</span> <span class="hljs-string">&quot;always&quot;</span>
 </div></code></pre>
 <ul>
-<li>run: &quot;always&quot; を指定し、2回目以降の Vagrant の起動でも Docker Compose が実行されるようにする</li>
+<li>run: &quot;always&quot; を指定し、2回目以降の Vagrant の起動でも、毎回 Docker Compose が実行されるようにする</li>
 </ul>
 </li>
 </ul>
@@ -251,56 +252,163 @@
 <h3 id="docker-compose-設定">▼Docker Compose 設定</h3>
 <ul>
 <li>docker/docker-compose.yml に各コンテナの設定を記述</li>
-<li></li>
+<li>非常にシンプルな構成としており、コンテナビルド用の Dockerfile を使用せず（コンテナをビルドせず）、公開されているコンテナイメージをそのまま利用する</li>
+</ul>
+<!-- omit in toc -->
+<h4 id="永続化">▽永続化</h4>
+<ul>
+<li>
+<p>volumes 設定を使用し、DBデータなどはコンテナホスト側（macOS から見たらゲストの Vagrant VM）のディレクトリをマウントするように設定</p>
+<pre><code class="language-shell"><div>/opt/
+├── cache/          # cache コンテナ用
+│   └── redis/      # Redis 用
+│       └── data/
+├── ddb/            # ddb コンテナ用
+│   └── mongodb/    # MongoDB 用
+│       └── data/
+├── rdb1/           # rdb1 コンテナ用
+│   └── mariadb/    # MariaDB 用
+│       └── data/
+├── rdb2/           # rdb2 コンテナ用
+│   └── postgresql/ # PostgreSQL 用
+│       └── data/
+└── web/            # web コンテナ用 
+    └── nginx/      # nginx 用
+        └── (なし)
+</div></code></pre>
+<ul>
+<li>これにより、コンテナを破棄してもデータが消えない</li>
+</ul>
+</li>
+<li>
+<p>Vagrant VM を破棄するとデータが消える</p>
+</li>
+</ul>
+<!-- omit in toc -->
+<h4 id="ログ">▽ログ</h4>
+<ul>
+<li>
+<p>volumes 設定を使用し、ログはコンテナホスト側（macOS から見たらゲストの Vagrant VM）のディレクトリをマウントするように設定</p>
+<pre><code class="language-shell"><div>/opt/
+├── cache/          # cache コンテナ用
+│   └── redis/      # Redis 用
+│       └── (なし)
+├── ddb/            # ddb コンテナ用
+│   └── mongodb/    # MongoDB 用
+│       └── log/
+├── rdb1/           # rdb1 コンテナ用
+│   └── mariadb/    # MariaDB 用
+│       └── log/
+├── rdb2/           # rdb2 コンテナ用
+│   └── postgresql/ # PostgreSQL 用
+│       └── log/
+└── web/            # web コンテナ用 
+    └── nginx/      # nginx 用
+        └── log/
+</div></code></pre>
+<ul>
+<li>ただし、所定の場所にログが出力されていないのか、nginx 以外の記録を確認できていない</li>
+</ul>
+</li>
 </ul>
 <hr>
 <h2 id="docker-操作方法">■Docker 操作方法</h2>
 <!-- omit in toc -->
 <h3 id="docker-コマンドの実行方法１vm-にログインして-docker-コマンドを実行">▼docker コマンドの実行方法１：VM にログインして docker コマンドを実行</h3>
+<!-- omit in toc -->
+<h4 id="準備">▽準備</h4>
 <ul>
-<li>xxx</li>
+<li>不要</li>
 </ul>
 <!-- omit in toc -->
-<h3 id="docker-コマンドの実行方法2macos-からdocker-コマンドを実行1">▼docker コマンドの実行方法2：macOS から　docker コマンドを実行(1)</h3>
+<h4 id="コマンド実行">▽コマンド実行</h4>
 <ul>
-<li>xxx</li>
-</ul>
-<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> vagrant</span>
+<li>
+<p>macOS</p>
+<pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> VM にログイン</span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> vagrant</span>
 <span class="hljs-meta">$</span><span class="bash"> vagrant ssh</span>
+</div></code></pre>
+</li>
+<li>
+<p>VM(ubntu)</p>
+<pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> docker コマンドを実行（何かしらのサブコマンドを指定すると、Docker サーバーにアクセスする）</span>
+<span class="hljs-meta">$</span><span class="bash"> docker version</span>
+Client: Docker Engine - Community
+Version:           20.10.17
+API version:       1.41
+...
+OS/Arch:          linux/amd64
+...
+
+Server: Docker Engine - Community
+Engine:
+  Version:          20.10.17
+  API version:      1.41 (minimum version 1.12)
+  ...
+  OS/Arch:          linux/amd64
+  ...
+</div></code></pre>
+</li>
+</ul>
+<!-- omit in toc -->
+<h3 id="docker-コマンドの実行方法2macos-からdocker-コマンドを実行">▼docker コマンドの実行方法2：macOS から　docker コマンドを実行</h3>
+<!-- omit in toc -->
+<h4 id="準備-1">▽準備</h4>
+<ul>
+<li>
+<p>macOS</p>
+<pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> VM にログイン</span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> vagrant</span>
+<span class="hljs-meta">$</span><span class="bash"> vagrant ssh</span>
+</div></code></pre>
+</li>
+<li>
+<p>VM(ubntu)</p>
+<pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> /usr/lib/systemd/system/docker.service をテキストエディタで編集</span>
 <span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> /usr/lib/systemd/system</span>
-<span class="hljs-meta">$</span><span class="bash"> sudo vi docker.service</span>
+<span class="hljs-meta">$</span><span class="bash"> sudo vi docker.service  または  $ sudo nano docker.service</span>
+<span class="hljs-meta">#</span><span class="bash"> この行を変更</span>
 ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
-  ↓ 「--tls=false -H tcp://0.0.0.0:2375」を追加
+<span class="hljs-meta">#</span><span class="bash"> ↓ コマンドラインオプションに「--tls=<span class="hljs-literal">false</span> -H tcp://0.0.0.0:2375」を追加</span>
 ExecStart=/usr/bin/dockerd -H fd:// --tls=false -H tcp://0.0.0.0:2375 --containerd=/run/containerd/containerd.sock
+<span class="hljs-meta">#</span><span class="bash"> サービス設定を再読み込み</span>
 <span class="hljs-meta">$</span><span class="bash"> sudo systemctl daemon-reload</span>
+<span class="hljs-meta">#</span><span class="bash"> Docker サービスを再起動</span>
 <span class="hljs-meta">$</span><span class="bash"> sudo systemctl restart docker</span>
 </div></code></pre>
-<pre><code class="language-shell"><div>unset DOCKER_TLS_VERIFY
-unset DOCKER_CERT_PATH
-export DOCKER_HOST=tcp://192.168.56.10:2375
-export DOCKER_MACHINE_NAME=testdocker
-</div></code></pre>
+</li>
+</ul>
 <!-- omit in toc -->
-<h3 id="docker-コマンドの実行方法3macos-からdocker-コマンドを実行2">▼docker コマンドの実行方法3：macOS から　docker コマンドを実行(2)</h3>
+<h4 id="コマンド実行-1">▽コマンド実行</h4>
 <ul>
 <li>
-<p>シェルスクリプトまたは Ansible から Docker をセットアップ</p>
-</li>
-<li>
-<p>Docker 接続用の証明書をコピー</p>
-<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> mkdir ~/.docker/testdocker</span>
-<span class="hljs-meta">$</span><span class="bash"> cp setup/config/docker/ca/ca.pem <span class="hljs-variable">$HOME</span>/.docker/testdocker/.</span>
-<span class="hljs-meta">$</span><span class="bash"> cp setup/config/docker/ca/client-cert.pem <span class="hljs-variable">$HOME</span>/.docker/testdocker/cert.pem</span>
-<span class="hljs-meta">$</span><span class="bash"> cp setup/config/docker/ca/client-key.pem <span class="hljs-variable">$HOME</span>/.docker/testdocker/key.pem</span>
+<p>macOS</p>
+<pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> docker コマンドの接続先を環境変数で設定</span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">export</span> DOCKER_HOST=tcp://192.168.56.10:2375</span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">export</span> DOCKER_MACHINE_NAME=testdocker</span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">unset</span> DOCKER_TLS_VERIFY</span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">unset</span> DOCKER_CERT_PATH</span>
+<span class="hljs-meta">#</span><span class="bash"> docker コマンドを実行（何かしらのサブコマンドを指定すると、Docker サーバーにアクセスする）</span>
+<span class="hljs-meta">$</span><span class="bash"> docker version</span>
+Client: Docker Engine - Community
+Version:           20.10.17
+API version:       1.41
+...
+OS/Arch:           darwin/amd64
+...
+
+Server: Docker Engine - Community
+Engine:
+  Version:          20.10.17
+  API version:      1.41 (minimum version 1.12)
+  ...
+  OS/Arch:          linux/amd64
+  ...
 </div></code></pre>
-</li>
-<li>
-<p>環境変数を設定</p>
-<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">export</span> DOCKER_TLS_VERIFY=<span class="hljs-string">&quot;1&quot;</span></span>
-<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">export</span> DOCKER_HOST=<span class="hljs-string">&quot;tcp://192.168.56.10:2376&quot;</span></span>
-<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">export</span> DOCKER_CERT_PATH=<span class="hljs-string">&quot;<span class="hljs-variable">$HOME</span>/.docker/testdocker&quot;</span></span>
-<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">export</span> DOCKER_MACHINE_NAME=<span class="hljs-string">&quot;testdocker&quot;</span></span>
-</div></code></pre>
+<ul>
+<li>macOS 上から頻繁に docker コマンドを使用する場合は、これらの環境変数を ~/.zshrc に設定しておくなと便利</li>
+</ul>
 </li>
 </ul>
 <!-- omit in toc -->
@@ -370,97 +478,157 @@ export DOCKER_MACHINE_NAME=testdocker
 <li><a href="https://github.com/gakimaru-on-connext/testansible#%E8%A7%A3%E8%AA%AC%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0">testansible</a> 参照</li>
 </ul>
 <!-- omit in toc -->
-<h3 id="準備">▼準備</h3>
+<h3 id="ansible-プロビジョニング準備">▼Ansible プロビジョニング準備</h3>
 <ul>
 <li><a href="https://github.com/gakimaru-on-connext/testansible#ansible-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E6%BA%96%E5%82%99">testansible</a> 参照</li>
 </ul>
 <!-- omit in toc -->
-<h3 id="実行">▼実行</h3>
+<h3 id="ansible-プロビジョニング実行">▼Ansible プロビジョニング実行</h3>
 <ul>
 <li><a href="https://github.com/gakimaru-on-connext/testansible#ansible-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E5%AE%9F%E8%A1%8C">testansible</a> 参照</li>
+</ul>
+<hr>
+<h2 id="docker-操作方法２">■Docker 操作方法（２）</h2>
+<ul>
+<li>シェルスクリプトまたは Ansible による Docker プロビジョニングを行った場合の Docker 操作方法</li>
+<li>これらのセットアップでは、Docker サーバーにSSL通信でアクセスするように構成している</li>
+</ul>
+<!-- omit in toc -->
+<h3 id="docker-コマンドの実行方法１vm-にログインして-docker-コマンドを実行-1">▼docker コマンドの実行方法１：VM にログインして docker コマンドを実行</h3>
+<ul>
+<li><a href="#docker-%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">■Docker 操作方法</a> と同じ</li>
+</ul>
+<!-- omit in toc -->
+<h3 id="docker-コマンドの実行方法2macos-からdocker-コマンドを実行-1">▼docker コマンドの実行方法2：macOS から　docker コマンドを実行</h3>
+<!-- omit in toc -->
+<h4 id="準備-2">▽準備</h4>
+<ul>
+<li>
+<p>macOS</p>
+<pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> クライアント用の証明書ファイルをコピー</span>
+<span class="hljs-meta">$</span><span class="bash"> CEERT_DST=<span class="hljs-variable">$HOME</span>/.docker/testdocker</span>
+<span class="hljs-meta">$</span><span class="bash"> mkdir -p <span class="hljs-variable">$CEERT_DST</span></span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> setup/config/docker/ca</span>
+<span class="hljs-meta">$</span><span class="bash"> cp ca.pem <span class="hljs-variable">$CEERT_DST</span>/.</span>
+<span class="hljs-meta">$</span><span class="bash"> cp client-cert.pem <span class="hljs-variable">$CEERT_DST</span>/cert.pem</span>
+<span class="hljs-meta">$</span><span class="bash"> cp client-key.pem <span class="hljs-variable">$CEERT_DST</span>/key.pem</span>
+</div></code></pre>
+</li>
+</ul>
+<!-- omit in toc -->
+<h4 id="コマンド実行-2">▽コマンド実行</h4>
+<ul>
+<li>
+<p>macOS</p>
+<pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> docker コマンドの接続先を環境変数で設定</span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">export</span> DOCKER_HOST=<span class="hljs-string">&quot;tcp://192.168.56.10:2376&quot;</span></span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">export</span> DOCKER_MACHINE_NAME=<span class="hljs-string">&quot;testdocker&quot;</span></span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">export</span> DOCKER_TLS_VERIFY=<span class="hljs-string">&quot;1&quot;</span></span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">export</span> DOCKER_CERT_PATH=<span class="hljs-string">&quot;<span class="hljs-variable">$HOME</span>/.docker/testdocker&quot;</span></span>
+<span class="hljs-meta">#</span><span class="bash"> docker コマンドを実行（何かしらのサブコマンドを指定すると、Docker サーバーにアクセスする）</span>
+<span class="hljs-meta">$</span><span class="bash"> docker version</span>
+Client: Docker Engine - Community
+Version:           20.10.17
+API version:       1.41
+...
+OS/Arch:           darwin/amd64
+...
+
+Server: Docker Engine - Community
+Engine:
+  Version:          20.10.17
+  API version:      1.41 (minimum version 1.12)
+  ...
+  OS/Arch:          linux/amd64
+  ...
+</div></code></pre>
+<ul>
+<li>macOS 上から頻繁に docker コマンドを使用する場合は、これらの環境変数を ~/.zshrc に設定しておくなと便利</li>
+</ul>
+</li>
 </ul>
 <hr>
 <h2 id="ディレクトリ構成">■ディレクトリ構成</h2>
 <pre><code class="language-shell"><div>testdocker/
 ├── README.html
 ├── README.md
-├── docker/
-│   ├── docker-compose.yml
-│   └── web/
-│       └── nginx/
-│           ├── conf.d/
-│           │   └── default.conf
-│           └── html/
-│               ├── 50x.html
-│               └── index.html
-└── vagrant/
-    ├── share/
-    └── Vagrantfile
+├── docker/                      # Docker 用
+│   ├── web/                     # Docker web コンテナ用
+│   │   └── nginx/               # Docker web コンテナ：nginx 用
+│   │       ├── conf.d/
+│   │       │   └── default.conf
+│   │       └── html/ 
+│   │           ├── 50x.html
+│   │           └── index.html
+│   └── docker-compose.yml       # Docker Compose コンテナ群設定ファイル
+├── vagrant/                     # vagrant 用
+│   ├── share/                   # vagrant 共有ディレクトリ（未使用）
+│   └── Vagrantfile              # vagrant VM 設定
+├── setup/                       # セットアップシェルスクリプト用（使用しない）
+└── ansible/                     # Ansible 用（使用しない）
 </div></code></pre>
 <!-- omit in toc -->
 <h3 id="シェルスクリプトによる-os--docker-セットアップを行う場合">▼シェルスクリプトによる OS ＆ Docker セットアップを行う場合</h3>
 <pre><code class="language-shell"><div>testdocker/
 ├── README.html
 ├── README.md
-├── docker/
-│   ├── docker-compose.yml
-│   └── web/
-│       └── nginx/
-│           ├── conf.d/
-│           │   └── default.conf
-│           └── html/
-│               ├── 50x.html
-│               └── index.html
-├── setup/
-│   ├── config/
-│   │   ├── docker/
-│   │   │   ├── ca/
-│   │   │   │   ├── ca-key.pem
-│   │   │   │   ├── ca.pem
-│   │   │   │   ├── client-cert.pem
-│   │   │   │   ├── client-extfile.cnf
-│   │   │   │   ├── client-key.pem
-│   │   │   │   ├── client.csr
-│   │   │   │   ├── server-cert.pem
-│   │   │   │   ├── server-extfile.cnf
-│   │   │   │   ├── server-key.pem
-│   │   │   │   └── server.csr
-│   │   │   └── how2make_cert.txt
-│   │   └── etc/
-│   │       └── yum.repos.d
-│   │           └── mongodb-org-6.0.repo
-│   ├── setup_os.sh
-│   └── setup_package_docker.sh
-└── vagrant/
-    ├── share/
-    └── Vagrantfile
+├── docker/                             # Docker 用
+│   ├── web/                            # Docker web コンテナ用
+│   │   └── nginx/                      # Docker web コンテナ：nginx 用
+│   │       ├── conf.d/
+│   │       │   └── default.conf
+│   │       └── html/ 
+│   │           ├── 50x.html
+│   │           └── index.html
+│   └── docker-compose.yml              # Docker Compose コンテナ群設定ファイル
+├── setup/                              # セットアップシェルスクリプト／設定用
+│   ├── config/                         # 各セットアップで使用する設定ファイル
+│   │   └── docker/                     # Docker 設定用
+│   │       ├── ca/                     # Docker コマンド証明書用
+│   │       │   ├── ca-key.pem
+│   │       │   ├── ca.pem              # サーバー側／クライアント側証明書用
+│   │       │   ├── client-cert.pem     # クライアント側証明書用
+│   │       │   ├── client-extfile.cnf
+│   │       │   ├── client-key.pem      # クライアント側証明書用
+│   │       │   ├── client.csr
+│   │       │   ├── server-cert.pem     # サーバー側証明書用
+│   │       │   ├── server-extfile.cnf
+│   │       │   ├── server-key.pem      # サーバー側証明書用
+│   │       │   └── server.csr
+│   │       └── how2make_cert.txt       # 証明書作成手順
+│   ├── setup_os.sh                     # 
+│   └── setup_package_docker.sh         # 
+├── vagrant/                            # vagrant 用
+│   ├── share/                          # vagrant 共有ディレクトリ（未使用）
+│   └── Vagrantfile                     # vagrant VM 設定
+└── ansible/                            # Ansible 用（使用しない）
 </div></code></pre>
 <!-- omit in toc -->
 <h3 id="ansible-による-os--docker-セットアップを行う場合に使用するファイル">▼Ansible による OS ＆ Docker セットアップを行う場合に使用するファイル</h3>
 <pre><code class="language-shell"><div>testdocker/
 ├── README.html
 ├── README.md
-├── ansible/
-│   ├── playbook/
-│   │   ├── inventories/
-│   │   │   ├── templates/
-│   │   │   │   ├── common/
+├── ansible/                                      # Ansible 用
+│   ├── playbook/                                 # Ansible プレイブック用
+│   │   ├── inventories/                          # Ansible インベントリ用
+│   │   │   ├── templates/                        # Ansible インベントリテンプレート用
+│   │   │   │   ├── common/                       # Ansible インベントリ共通テンプレート
 │   │   │   │   │   ├── __footer.yml
 │   │   │   │   │   ├── __groups.yml
 │   │   │   │   │   ├── __header.yml
 │   │   │   │   │   └── __vars.yml
 │   │   │   │   └── _(環境名)_hosts.yml            # Ansible インベントリ環境別テンプレート
 │   │   │   └── (環境名)_hosts.yml                 # Ansible インベントリ（環境別）
-│   │   ├── roles/
-│   │   │   ├── info_inventory/
+│   │   ├── roles/                                # Ansible ロール用
+│   │   │   ├── info_inventory/                   # Ansible ロール：インベントリ情報出力
 │   │   │   │   └── tasks/
 │   │   │   │       └── main.yml
-│   │   │   ├── os_base_setup/
+│   │   │   ├── os_base_setup/                    # Ansible ロール：OS 基本セットアップ
 │   │   │   │   ├── tasks/
 │   │   │   │   │   └── main.yml
 │   │   │   │   └── vars/
 │   │   │   │       └── vars.yml
-│   │   │   ├── os_user_setup/
+│   │   │   ├── os_user_setup/                    # Ansible ロール：OS ユーザーセットアップ
 │   │   │   │   ├── authorized_keys
 │   │   │   │   │   ├── add/
 │   │   │   │   │   │   └── *.pub
@@ -471,12 +639,12 @@ export DOCKER_MACHINE_NAME=testdocker
 │   │   │   │   └── templates/
 │   │   │   │       ├─ .bashrc.ext.j2
 │   │   │   │       └── sudoers-user.j2
-│   │   │   ├── package_docker_client_setup/
+│   │   │   ├── package_docker_client_setup/      # Ansible ロール：パッケージ：Docker クライアントセットアップ
 │   │   │   │   ├── tasks/
 │   │   │   │   │   └── main.yml
 │   │   │   │   └── templates/
 │   │   │   │       └─ .bashrc.docker.j2
-│   │   │   ├── package_docker_common_setup/
+│   │   │   ├── package_docker_common_setup/      # Ansible ロール：パッケージ：Docker サーバー／クライアント共通セットアップ
 │   │   │   │   ├── files/
 │   │   │   │   │   ├── ca.pem
 │   │   │   │   │   ├── client-cert.pem
@@ -488,7 +656,7 @@ export DOCKER_MACHINE_NAME=testdocker
 │   │   │   │   │   └── main.yml
 │   │   │   │   └── vars/
 │   │   │   │       └── vars.yml
-│   │   │   └── package_docker_server_setup/
+│   │   │   └── package_docker_server_setup/      # Ansible ロール：パッケージ：Docker サーバーセットアップ
 │   │   │       ├── handlers/
 │   │   │       │   └── main.yml
 │   │   │       ├── tasks/
@@ -496,48 +664,50 @@ export DOCKER_MACHINE_NAME=testdocker
 │   │   │       │   └── restart_docker_server.yml
 │   │   │       └── vars/
 │   │   │           └── vars.yml
-│   │   ├── vars/
+│   │   ├── vars/                                 # Ansible 共通変数用
 │   │   │   └── common_vars.yml
 │   │   ├── .ansible-lint                         # Ansible-lint 設定
-│   │   ├── ansible.cfg
-│   │   ├── playbook_info_print.yml
-│   │   ├── playbook_os_setup.yml
-│   │   ├── playbook_package_docker_setup.yml
-│   │   └── site_all_setup.yml
+│   │   ├── ansible.cfg                           # Ansible 基本設定
+│   │   ├── playbook_info_print.yml               # Ansible プレイブック：情報表示
+│   │   ├── playbook_os_setup.yml                 # Ansible プレイブック：OSセットアップ
+│   │   ├── playbook_package_docker_setup.yml     # Ansible プレイブック：Docker セットアップ
+│   │   └── site_all_setup.yml                    # Ansible サイト：全セットアップ
 │   ├── _env.rc
 │   ├── _provision.rc
-│   ├── ansible_lint.sh
-│   ├── ansible_lint_result.txt
-│   ├── inventories_setup.sh
-│   ├── inventories_verify.sh
-│   └── provision_vagrant.sh
-├── docker/
-│   ├── docker-compose.yml
-│   └── web/
-│       └── nginx/
-│           ├── conf.d/
-│           │   └── default.conf
-│           └── html/
-│               ├── 50x.html
-│               └── index.html
-├── setup/
-│   └── config/
-│       └── docker/
-│           ├── ca/
-│           │   ├── ca-key.pem
-│           │   ├── ca.pem
-│           │   ├── client-cert.pem
-│           │   ├── client-extfile.cnf
-│           │   ├── client-key.pem
-│           │   ├── client.csr
-│           │   ├── server-cert.pem
-│           │   ├── server-extfile.cnf
-│           │   ├── server-key.pem
-│           │   └── server.csr
-│           └── how2make_cert.txt
-└── vagrant/
-    ├── share/
-    └── Vagrantfile
+│   ├── ansible_lint.sh                           # Ansible-lint 実行スクリプト
+│   ├── ansible_lint_result.txt                   # Ansible-lint 実行結果
+│   ├── inventories_setup.sh                      # Ansible インベントリセットアップスクリプト
+│   ├── inventories_verify.sh                     # Ansible インベントリ検証スクリプト
+│   └── provision_(環境名).sh                      # Ansible 実行スクリプト
+├── docker/                                       # Docker 用
+│   ├── web/                                      # Docker web コンテナ用
+│   │   └── nginx/                                # Docker web コンテナ：nginx 用
+│   │       ├── conf.d/
+│   │       │   └── default.conf
+│   │       └── html/ 
+│   │           ├── 50x.html
+│   │           └── index.html
+│   └── docker-compose.yml                        # Docker Compose コンテナ群設定ファイル
+├── setup/                                        # セットアップシェルスクリプト／設定用
+│   ├── config/                                   # 各セットアップで使用する設定ファイル
+│   │   ├── docker/                               # Docker 設定用
+│   │   │   ├── ca/                               # Docker コマンド証明書用
+│   │   │   │   ├── ca-key.pem
+│   │   │   │   ├── ca.pem                        # サーバー側／クライアント側証明書用
+│   │   │   │   ├── client-cert.pem               # クライアント側証明書用
+│   │   │   │   ├── client-extfile.cnf
+│   │   │   │   ├── client-key.pem                # クライアント側証明書用
+│   │   │   │   ├── client.csr
+│   │   │   │   ├── server-cert.pem               # サーバー側証明書用
+│   │   │   │   ├── server-extfile.cnf
+│   │   │   │   ├── server-key.pem                # サーバー側証明書用
+│   │   │   │   └── server.csr
+│   │   │   └── how2make_cert.txt                 # 証明書作成手順
+│   │   └── (その他)                               # （使用しない）
+│   └── (その他)                                   # （使用しない）
+└── vagrant/                                      # vagrant 用
+    ├── share/                                    # vagrant 共有ディレクトリ（未使用）
+    └── Vagrantfile                               # vagrant VM 設定
 </div></code></pre>
 <hr>
 <p>以上</p>

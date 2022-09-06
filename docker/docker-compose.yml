@@ -15,8 +15,8 @@ services:
       MYSQL_PASSWORD: hogehoge
       MYSQL_DATABASE: mysql
     volumes:
-      - /opt/rdb1/mysql:/var/lib/mysql:rw
-      - /opt/rdb1/mysql/log:/var/log/mysql:rw
+      - /opt/rdb1/mariadb/data:/var/lib/mysql:rw
+      - /opt/rdb1/mariadb/log:/var/log/mysql:rw
     #networks:
     #  - backend
 
@@ -42,7 +42,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - /opt/ddb/mongodb/db:/data/db:rw
+      - /opt/ddb/mongodb/data:/data/db:rw
       - /opt/ddb/mongodb/log:/var/log/mongodb:rw
     #networks:
     #  - backend
