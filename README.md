@@ -630,7 +630,8 @@ $ docker-compose kill (サービス名)
 <!-- omit in toc -->
 ### ▼セキュアな docker コマンドの実行方法１：VM にログインして docker コマンドを実行
 
-- [■Docker 操作方法](#docker-操作方法) と同じ
+- コンテナホスト上ではSSL通信ではなく Unix ソケットで直接通信するため、セキュア設定と関係なく普通にコマンドを扱える
+  - [■Docker 操作方法](#docker-操作方法) と同じ
 
 <!-- omit in toc -->
 ### ▼セキュアな docker コマンドの実行方法2：macOS から　docker コマンドを実行
