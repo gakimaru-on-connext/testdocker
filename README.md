@@ -15,7 +15,7 @@
 - [■Docker Compose 操作方法](#docker-compose-操作方法)
 - [■シェルスクリプトによる Docker プロビジョニングを行う場合](#シェルスクリプトによる-docker-プロビジョニングを行う場合)
 - [■Ansible による Docker プロビジョニングを行う場合](#ansible-による-docker-プロビジョニングを行う場合)
-- [■Docker 操作方法（２）](#docker-操作方法２)
+- [■セキュアな　Docker 操作方法](#セキュアなdocker-操作方法)
 - [■ディレクトリ構成](#ディレクトリ構成)
 
 ---
@@ -228,7 +228,7 @@
   $ vagrant ssh
   ```
 
-- VM(ubntu)
+- VM(ubuntu)
 
   ```shell
   # docker コマンドを実行（何かしらのサブコマンドを指定すると、Docker サーバーにアクセスする）
@@ -263,7 +263,7 @@
   $ vagrant ssh
   ```
 
-- VM(ubntu)
+- VM(ubuntu)
 
   ```shell
   # /usr/lib/systemd/system/docker.service をテキストエディタで編集
@@ -313,55 +313,279 @@
 <!-- omit in toc -->
 ### ▼docker コンテナにログイン
 
-- xxx
+- docker コマンドの exec サブコマンドを、-it オプションを付けて bash を実行することでリモートログインを実現する
+
+  ```shell
+  $ docker exec -it (コンテナ名) bash
+  ```
+
+  - -i ... interactive: 標準入力（キー操作）を受け付ける
+  - -t ... tty: 疑似 TTY を割り当て（端末操作を可能にする）
+
+<!-- omit in toc -->
+#### ▽rdb1 (MariaDB) コンテナにログイン
+
+```shell
+$ docker exec -it rdb1 bash
+```
+
+<!-- omit in toc -->
+#### ▽rdb2 (PostgreSQL) コンテナにログイン
+
+```shell
+$ docker exec -it rdb2 bash
+```
+
+<!-- omit in toc -->
+#### ▽ddb (MongoDB) コンテナにログイン
+
+```shell
+$ docker exec -it ddb bash
+```
+
+<!-- omit in toc -->
+#### ▽cache (Redis) コンテナにログイン
+
+```shell
+$ docker exec -it cache bash
+```
+
+<!-- omit in toc -->
+#### ▽web (Nginx) コンテナにログイン
+
+```shell
+$ docker exec -it web bash
+```
+
 
 <!-- omit in toc -->
 ### ▼docker コンテナの確認
 
-- xxx
+<!-- omit in toc -->
+#### ▽稼働中のコンテナのリストアップ
+
+```shell
+$ docker ps
+CONTAINER ID   IMAGE                   COMMAND                  CREATED       STATUS         PORTS                                      NAMES
+285e17f606ab   nginx:latest            "/docker-entrypoint.…"   3 hours ago   Up 2 minutes   0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp   web
+9a888f6d8ce9   adminer:latest          "entrypoint.sh docke…"   3 hours ago   Up 3 minutes   0.0.0.0:8080->8080/tcp                     adminer
+02c7153223f9   mariadb/server:latest   "docker-entrypoint.s…"   3 hours ago   Up 2 minutes   0.0.0.0:3306->3306/tcp                     rdb1
+7c94e5e9a5a1   redis:latest            "docker-entrypoint.s…"   3 hours ago   Up 2 minutes   0.0.0.0:6379->6379/tcp                     cache
+ec473add1fe7   postgres:latest         "docker-entrypoint.s…"   3 hours ago   Up 2 minutes   0.0.0.0:5432->5432/tcp                     rdb2
+e70b1563b997   mongo:latest            "docker-entrypoint.s…"   3 hours ago   Up 2 minutes   0.0.0.0:27017->27017/tcp                   ddb
+```
 
 <!-- omit in toc -->
 ### ▼docker コンテナの停止（kill）
 
-- xxx
+```shell
+$ docker kill (コンテナ名|コンテナID)
+```
+
+<!-- omit in toc -->
+#### ▽停止しているコンテナのリストアップ
+
+```shell
+$ docker ps -a
+CONTAINER ID   IMAGE                   COMMAND                  CREATED       STATUS                            PORTS                      NAMES
+285e17f606ab   nginx:latest            "/docker-entrypoint.…"   3 hours ago   Exited (137) 2 minutes ago                                   web
+9a888f6d8ce9   adminer:latest          "entrypoint.sh docke…"   3 hours ago   Exited (137) About a minute ago                              adminer
+02c7153223f9   mariadb/server:latest   "docker-entrypoint.s…"   3 hours ago   Up 5 minutes                      0.0.0.0:3306->3306/tcp     rdb1
+7c94e5e9a5a1   redis:latest            "docker-entrypoint.s…"   3 hours ago   Up 5 minutes                      0.0.0.0:6379->6379/tcp     cache
+ec473add1fe7   postgres:latest         "docker-entrypoint.s…"   3 hours ago   Up 5 minutes                      0.0.0.0:5432->5432/tcp     rdb2
+e70b1563b997   mongo:latest            "docker-entrypoint.s…"   3 hours ago   Up 5 minutes                      0.0.0.0:27017->27017/tcp   ddb
+```
+
+- コンテナのプログラム終了または docker kill によって終了したコンテナは、STATUS が Exited として表示される
+- -a オプションは稼働中のコンテナと終了したコンテナを全て出力する
+
+<!-- omit in toc -->
+### ▼docker コンテナの破棄
+
+```shell
+$ docker rm (コンテナ名|コンテナID)
+```
+
+- 停止状態のコンテナを破棄できる
+
+<!-- omit in toc -->
+### ▼docker コンテナイメージのリストアップ
+
+```shell
+$ docker image ls
+REPOSITORY       TAG       IMAGE ID       CREATED         SIZE
+mongo            latest    d34d21a9eb5b   4 days ago      693MB
+postgres         latest    b37c2a6c1506   13 days ago     376MB
+redis            latest    dc7b40a0b05d   13 days ago     117MB
+nginx            latest    2b7d6430f78d   2 weeks ago     142MB
+adminer          latest    75cd6c93316c   3 weeks ago     90.7MB
+mariadb/server   latest    763362775627   16 months ago   362MB
+```
 
 <!-- omit in toc -->
 ### ▼docker コンテナイメージの破棄
 
-- xxx
+```shell
+$ docker image rm (コンテナイメージID)
+```
+
+- 未使用状態のコンテナイメージを破棄できる
 
 ---
 ## ■Docker Compose 操作方法
 
 <!-- omit in toc -->
-### ▼docker コマンドの実行方法：VM にログインして docker-compose コマンドを実行
+### ▼docker-compose コマンドの実行方法：VM にログインして docker-compose コマンドを実行
 
-- xxx
+- macOS
+
+  ```shell
+  # VM にログイン
+  $ cd vagrant
+  $ vagrant ssh
+  ```
+
+- VM(ubuntu)
+
+  ```shell
+  # docker-compose.yml が存在するディレクトリに移動
+  cd /vagrant/docker/
+  # docker-compose コマンドを実行（何かしらのサブコマンドを指定すると、Docker サーバーにアクセスする）
+  $ docker-compose ps
+   Name                Command               State               Ports
+  --------------------------------------------------------------------------------
+  adminer   entrypoint.sh docker-php-e ...   Up      0.0.0.0:8080->8080/tcp
+  cache     docker-entrypoint.sh redis ...   Up      0.0.0.0:6379->6379/tcp
+  ddb       docker-entrypoint.sh mongod      Up      0.0.0.0:27017->27017/tcp
+  rdb1      docker-entrypoint.sh mysqld      Up      0.0.0.0:3306->3306/tcp
+  rdb2      docker-entrypoint.sh postgres    Up      0.0.0.0:5432->5432/tcp
+  web       /docker-entrypoint.sh ngin ...   Up      0.0.0.0:443->443/tcp,
+                                                     0.0.0.0:80->80/tcp
+  ```
 
 <!-- omit in toc -->
-### ▼docker コンテナをまとめて起動（非デーモンモード）
+### ▼サービス（docker　コンテナ）の稼働状態を確認
 
-- xxx
-
-<!-- omit in toc -->
-### ▼docker コンテナをまとめて起動（デーモンモード）
-
-- xxx
-
-<!-- omit in toc -->
-### ▼docker コンテナをまとめて停止
-
-- xxx
-
-<!-- omit in toc -->
-### ▼docker コンテナの一部を停止
-
-- xxx
+```shell
+$ docker-compose ps
+  Name                Command               State               Ports
+--------------------------------------------------------------------------------
+adminer   entrypoint.sh docker-php-e ...   Up      0.0.0.0:8080->8080/tcp
+cache     docker-entrypoint.sh redis ...   Up      0.0.0.0:6379->6379/tcp
+ddb       docker-entrypoint.sh mongod      Up      0.0.0.0:27017->27017/tcp
+rdb1      docker-entrypoint.sh mysqld      Up      0.0.0.0:3306->3306/tcp
+rdb2      docker-entrypoint.sh postgres    Up      0.0.0.0:5432->5432/tcp
+web       /docker-entrypoint.sh ngin ...   Up      0.0.0.0:443->443/tcp,
+                                                    0.0.0.0:80->80/tcp
+```
 
 <!-- omit in toc -->
-### ▼docker コンテナの一部を起動
+### ▼サービス（docker　コンテナ）をまとめて起動
 
-- xxx
+- 初回の起動は、イメージのダウンロードやイメージのビルドが行われるため時間がかかる
+
+<!-- omit in toc -->
+#### ▽非デーモンモード
+
+```shell
+$ docker-compose up
+Creating network "docker_default" with the default driver
+Creating cache ... done
+Creating rdb1  ... done
+Creating rdb2  ... done
+Creating ddb   ... done
+Creating adminer ... done
+Creating web     ... done
+Attaching to cache, rdb2, ddb, rdb1, adminer, web
+...
+# [ctrl] + c を入力
+Gracefully stopping... (press Ctrl+C again to force)
+Stopping adminer ... done
+Stopping web     ... done
+Stopping ddb     ... done
+Stopping rdb2    ... done
+Stopping rdb1    ... done
+Stopping cache   ... done
+```
+
+- この方法だと、ログが標準出力に流れる
+- 制御が返らないため、Ctrl+C で停止しなければならない
+- Ctrl+C で停止すると、全てのコンテナが停止する
+
+<!-- omit in toc -->
+#### ▽デーモンモード
+
+```shell
+$ docker-compose up -d
+Starting rdb1  ... done
+Starting ddb   ... done
+Starting cache ... done
+Starting rdb2  ... done
+Starting adminer ... done
+Starting web     ... done
+```
+
+- この方法だと、ログが標準出力に流れない
+- 制御がすぐに返ってきて、バックエンドでコンテが動作する
+- 停止したい時は docker-compose down を使用する必要がある
+
+<!-- omit in toc -->
+### ▼一部のサービス（docker　コンテナ）を起動
+
+<!-- omit in toc -->
+#### ▽非デーモンモード
+
+```shell
+$ docker-compose up (サービス名)
+```
+
+<!-- omit in toc -->
+#### ▽デーモンモード
+
+```shell
+$ docker-compose up -d (サービス名)
+```
+
+<!-- omit in toc -->
+### ▼サービス（docker　コンテナ）をまとめて停止
+
+```shell
+$ docker-compose down
+Stopping web     ... done
+Stopping adminer ... done
+Stopping ddb     ... done
+Stopping cache   ... done
+Stopping rdb1    ... done
+Stopping rdb2    ... done
+Removing web     ... done
+Removing adminer ... done
+Removing ddb     ... done
+Removing cache   ... done
+Removing rdb1    ... done
+Removing rdb2    ... done
+Removing network docker_default
+```
+
+<!-- omit in toc -->
+### ▼一部のサービス（docker　コンテナ）を停止
+
+```shell
+$ docker-compose down (サービス名)
+```
+
+<!-- omit in toc -->
+### ▼サービス（docker　コンテナ）をまとめて強制終了
+
+```shell
+$ docker-compose kill
+```
+
+<!-- omit in toc -->
+### ▼一部のサービス（docker　コンテナ）を強制終了
+
+```shell
+$ docker-compose kill (サービス名)
+```
 
 ---
 ## ■シェルスクリプトによる Docker プロビジョニングを行う場合
@@ -389,10 +613,11 @@
 - [testansible](https://github.com/gakimaru-on-connext/testansible#ansible-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E5%AE%9F%E8%A1%8C) 参照
 
 ---
-## ■Docker 操作方法（２）
+## ■セキュアな　Docker 操作方法
 
 - シェルスクリプトまたは Ansible による Docker プロビジョニングを行った場合の Docker 操作方法
-- これらのセットアップでは、Docker サーバーにSSL通信でアクセスするように構成している
+- これらのセットアップでは、Docker サーバーのアクセスにSSL通信を用いるように構成している
+  - docker-machine コマンドで Docker コンテナホストをセットアップした場合と同様の状態になる
 
 <!-- omit in toc -->
 ### ▼docker コマンドの実行方法１：VM にログインして docker コマンドを実行

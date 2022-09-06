@@ -96,7 +96,7 @@
 <li><a href="#docker-compose-%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">■Docker Compose 操作方法</a></li>
 <li><a href="#%E3%82%B7%E3%82%A7%E3%83%AB%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%81%AB%E3%82%88%E3%82%8B-docker-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%92%E8%A1%8C%E3%81%86%E5%A0%B4%E5%90%88">■シェルスクリプトによる Docker プロビジョニングを行う場合</a></li>
 <li><a href="#ansible-%E3%81%AB%E3%82%88%E3%82%8B-docker-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%92%E8%A1%8C%E3%81%86%E5%A0%B4%E5%90%88">■Ansible による Docker プロビジョニングを行う場合</a></li>
-<li><a href="#docker-%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95%EF%BC%92">■Docker 操作方法（２）</a></li>
+<li><a href="#%E3%82%BB%E3%82%AD%E3%83%A5%E3%82%A2%E3%81%AAdocker-%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">■セキュアな　Docker 操作方法</a></li>
 <li><a href="#%E3%83%87%E3%82%A3%E3%83%AC%E3%82%AF%E3%83%88%E3%83%AA%E6%A7%8B%E6%88%90">■ディレクトリ構成</a></li>
 </ul>
 <hr>
@@ -331,7 +331,7 @@
 </div></code></pre>
 </li>
 <li>
-<p>VM(ubntu)</p>
+<p>VM(ubuntu)</p>
 <pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> docker コマンドを実行（何かしらのサブコマンドを指定すると、Docker サーバーにアクセスする）</span>
 <span class="hljs-meta">$</span><span class="bash"> docker version</span>
 Client: Docker Engine - Community
@@ -364,7 +364,7 @@ Engine:
 </div></code></pre>
 </li>
 <li>
-<p>VM(ubntu)</p>
+<p>VM(ubuntu)</p>
 <pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> /usr/lib/systemd/system/docker.service をテキストエディタで編集</span>
 <span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> /usr/lib/systemd/system</span>
 <span class="hljs-meta">$</span><span class="bash"> sudo vi docker.service  または  $ sudo nano docker.service</span>
@@ -414,55 +414,221 @@ Engine:
 <!-- omit in toc -->
 <h3 id="docker-コンテナにログイン">▼docker コンテナにログイン</h3>
 <ul>
-<li>xxx</li>
+<li>
+<p>docker コマンドの exec サブコマンドを、-it オプションを付けて bash を実行することでリモートログインを実現する</p>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker <span class="hljs-built_in">exec</span> -it (コンテナ名) bash</span>
+</div></code></pre>
+<ul>
+<li>-i ... interactive: 標準入力（キー操作）を受け付ける</li>
+<li>-t ... tty: 疑似 TTY を割り当て（端末操作を可能にする）</li>
 </ul>
+</li>
+</ul>
+<!-- omit in toc -->
+<h4 id="rdb1-mariadb-コンテナにログイン">▽rdb1 (MariaDB) コンテナにログイン</h4>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker <span class="hljs-built_in">exec</span> -it rdb1 bash</span>
+</div></code></pre>
+<!-- omit in toc -->
+<h4 id="rdb2-postgresql-コンテナにログイン">▽rdb2 (PostgreSQL) コンテナにログイン</h4>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker <span class="hljs-built_in">exec</span> -it rdb2 bash</span>
+</div></code></pre>
+<!-- omit in toc -->
+<h4 id="ddb-mongodb-コンテナにログイン">▽ddb (MongoDB) コンテナにログイン</h4>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker <span class="hljs-built_in">exec</span> -it ddb bash</span>
+</div></code></pre>
+<!-- omit in toc -->
+<h4 id="cache-redis-コンテナにログイン">▽cache (Redis) コンテナにログイン</h4>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker <span class="hljs-built_in">exec</span> -it cache bash</span>
+</div></code></pre>
+<!-- omit in toc -->
+<h4 id="web-nginx-コンテナにログイン">▽web (Nginx) コンテナにログイン</h4>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker <span class="hljs-built_in">exec</span> -it web bash</span>
+</div></code></pre>
 <!-- omit in toc -->
 <h3 id="docker-コンテナの確認">▼docker コンテナの確認</h3>
-<ul>
-<li>xxx</li>
-</ul>
+<!-- omit in toc -->
+<h4 id="稼働中のコンテナのリストアップ">▽稼働中のコンテナのリストアップ</h4>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker ps</span>
+CONTAINER ID   IMAGE                   COMMAND                  CREATED       STATUS         PORTS                                      NAMES
+285e17f606ab   nginx:latest            &quot;/docker-entrypoint.…&quot;   3 hours ago   Up 2 minutes   0.0.0.0:80-&gt;80/tcp, 0.0.0.0:443-&gt;443/tcp   web
+9a888f6d8ce9   adminer:latest          &quot;entrypoint.sh docke…&quot;   3 hours ago   Up 3 minutes   0.0.0.0:8080-&gt;8080/tcp                     adminer
+02c7153223f9   mariadb/server:latest   &quot;docker-entrypoint.s…&quot;   3 hours ago   Up 2 minutes   0.0.0.0:3306-&gt;3306/tcp                     rdb1
+7c94e5e9a5a1   redis:latest            &quot;docker-entrypoint.s…&quot;   3 hours ago   Up 2 minutes   0.0.0.0:6379-&gt;6379/tcp                     cache
+ec473add1fe7   postgres:latest         &quot;docker-entrypoint.s…&quot;   3 hours ago   Up 2 minutes   0.0.0.0:5432-&gt;5432/tcp                     rdb2
+e70b1563b997   mongo:latest            &quot;docker-entrypoint.s…&quot;   3 hours ago   Up 2 minutes   0.0.0.0:27017-&gt;27017/tcp                   ddb
+</div></code></pre>
 <!-- omit in toc -->
 <h3 id="docker-コンテナの停止kill">▼docker コンテナの停止（kill）</h3>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker <span class="hljs-built_in">kill</span> (コンテナ名|コンテナID)</span>
+</div></code></pre>
+<!-- omit in toc -->
+<h4 id="停止しているコンテナのリストアップ">▽停止しているコンテナのリストアップ</h4>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker ps -a</span>
+CONTAINER ID   IMAGE                   COMMAND                  CREATED       STATUS                            PORTS                      NAMES
+285e17f606ab   nginx:latest            &quot;/docker-entrypoint.…&quot;   3 hours ago   Exited (137) 2 minutes ago                                   web
+9a888f6d8ce9   adminer:latest          &quot;entrypoint.sh docke…&quot;   3 hours ago   Exited (137) About a minute ago                              adminer
+02c7153223f9   mariadb/server:latest   &quot;docker-entrypoint.s…&quot;   3 hours ago   Up 5 minutes                      0.0.0.0:3306-&gt;3306/tcp     rdb1
+7c94e5e9a5a1   redis:latest            &quot;docker-entrypoint.s…&quot;   3 hours ago   Up 5 minutes                      0.0.0.0:6379-&gt;6379/tcp     cache
+ec473add1fe7   postgres:latest         &quot;docker-entrypoint.s…&quot;   3 hours ago   Up 5 minutes                      0.0.0.0:5432-&gt;5432/tcp     rdb2
+e70b1563b997   mongo:latest            &quot;docker-entrypoint.s…&quot;   3 hours ago   Up 5 minutes                      0.0.0.0:27017-&gt;27017/tcp   ddb
+</div></code></pre>
 <ul>
-<li>xxx</li>
+<li>コンテナのプログラム終了または docker kill によって終了したコンテナは、STATUS が Exited として表示される</li>
+<li>-a オプションは稼働中のコンテナと終了したコンテナを全て出力する</li>
 </ul>
 <!-- omit in toc -->
-<h3 id="docker-コンテナイメージの破棄">▼docker コンテナイメージの破棄</h3>
+<h3 id="docker-コンテナの破棄">▼docker コンテナの破棄</h3>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker rm (コンテナ名|コンテナID)</span>
+</div></code></pre>
 <ul>
-<li>xxx</li>
+<li>停止状態のコンテナを破棄できる</li>
+</ul>
+<!-- omit in toc -->
+<h3 id="docker-コンテナイメージのリストアップ">▼docker コンテナイメージのリストアップ</h3>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker image ls</span>
+REPOSITORY       TAG       IMAGE ID       CREATED         SIZE
+mongo            latest    d34d21a9eb5b   4 days ago      693MB
+postgres         latest    b37c2a6c1506   13 days ago     376MB
+redis            latest    dc7b40a0b05d   13 days ago     117MB
+nginx            latest    2b7d6430f78d   2 weeks ago     142MB
+adminer          latest    75cd6c93316c   3 weeks ago     90.7MB
+mariadb/server   latest    763362775627   16 months ago   362MB
+</div></code></pre>
+<!-- omit in toc -->
+<h3 id="docker-コンテナイメージの破棄">▼docker コンテナイメージの破棄</h3>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker image rm (コンテナイメージID)</span>
+</div></code></pre>
+<ul>
+<li>未使用状態のコンテナイメージを破棄できる</li>
 </ul>
 <hr>
 <h2 id="docker-compose-操作方法">■Docker Compose 操作方法</h2>
 <!-- omit in toc -->
-<h3 id="docker-コマンドの実行方法vm-にログインして-docker-compose-コマンドを実行">▼docker コマンドの実行方法：VM にログインして docker-compose コマンドを実行</h3>
+<h3 id="docker-compose-コマンドの実行方法vm-にログインして-docker-compose-コマンドを実行">▼docker-compose コマンドの実行方法：VM にログインして docker-compose コマンドを実行</h3>
 <ul>
-<li>xxx</li>
+<li>
+<p>macOS</p>
+<pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> VM にログイン</span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> vagrant</span>
+<span class="hljs-meta">$</span><span class="bash"> vagrant ssh</span>
+</div></code></pre>
+</li>
+<li>
+<p>VM(ubuntu)</p>
+<pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> docker-compose.yml が存在するディレクトリに移動</span>
+cd /vagrant/docker/
+<span class="hljs-meta">#</span><span class="bash"> docker-compose コマンドを実行（何かしらのサブコマンドを指定すると、Docker サーバーにアクセスする）</span>
+<span class="hljs-meta">$</span><span class="bash"> docker-compose ps</span>
+ Name                Command               State               Ports
+--------------------------------------------------------------------------------
+adminer   entrypoint.sh docker-php-e ...   Up      0.0.0.0:8080-&gt;8080/tcp
+cache     docker-entrypoint.sh redis ...   Up      0.0.0.0:6379-&gt;6379/tcp
+ddb       docker-entrypoint.sh mongod      Up      0.0.0.0:27017-&gt;27017/tcp
+rdb1      docker-entrypoint.sh mysqld      Up      0.0.0.0:3306-&gt;3306/tcp
+rdb2      docker-entrypoint.sh postgres    Up      0.0.0.0:5432-&gt;5432/tcp
+web       /docker-entrypoint.sh ngin ...   Up      0.0.0.0:443-&gt;443/tcp,
+                                                   0.0.0.0:80-&gt;80/tcp
+</div></code></pre>
+</li>
 </ul>
 <!-- omit in toc -->
-<h3 id="docker-コンテナをまとめて起動非デーモンモード">▼docker コンテナをまとめて起動（非デーモンモード）</h3>
+<h3 id="サービスdockerコンテナの稼働状態を確認">▼サービス（docker　コンテナ）の稼働状態を確認</h3>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker-compose ps</span>
+  Name                Command               State               Ports
+--------------------------------------------------------------------------------
+adminer   entrypoint.sh docker-php-e ...   Up      0.0.0.0:8080-&gt;8080/tcp
+cache     docker-entrypoint.sh redis ...   Up      0.0.0.0:6379-&gt;6379/tcp
+ddb       docker-entrypoint.sh mongod      Up      0.0.0.0:27017-&gt;27017/tcp
+rdb1      docker-entrypoint.sh mysqld      Up      0.0.0.0:3306-&gt;3306/tcp
+rdb2      docker-entrypoint.sh postgres    Up      0.0.0.0:5432-&gt;5432/tcp
+web       /docker-entrypoint.sh ngin ...   Up      0.0.0.0:443-&gt;443/tcp,
+                                                    0.0.0.0:80-&gt;80/tcp
+</div></code></pre>
+<!-- omit in toc -->
+<h3 id="サービスdockerコンテナをまとめて起動">▼サービス（docker　コンテナ）をまとめて起動</h3>
 <ul>
-<li>xxx</li>
+<li>初回の起動は、イメージのダウンロードやイメージのビルドが行われるため時間がかかる</li>
 </ul>
 <!-- omit in toc -->
-<h3 id="docker-コンテナをまとめて起動デーモンモード">▼docker コンテナをまとめて起動（デーモンモード）</h3>
+<h4 id="非デーモンモード">▽非デーモンモード</h4>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker-compose up</span>
+Creating network &quot;docker_default&quot; with the default driver
+Creating cache ... done
+Creating rdb1  ... done
+Creating rdb2  ... done
+Creating ddb   ... done
+Creating adminer ... done
+Creating web     ... done
+Attaching to cache, rdb2, ddb, rdb1, adminer, web
+...
+<span class="hljs-meta">#</span><span class="bash"> [ctrl] + c を入力</span>
+Gracefully stopping... (press Ctrl+C again to force)
+Stopping adminer ... done
+Stopping web     ... done
+Stopping ddb     ... done
+Stopping rdb2    ... done
+Stopping rdb1    ... done
+Stopping cache   ... done
+</div></code></pre>
 <ul>
-<li>xxx</li>
+<li>この方法だと、ログが標準出力に流れる</li>
+<li>制御が返らないため、Ctrl+C で停止しなければならない</li>
+<li>Ctrl+C で停止すると、全てのコンテナが停止する</li>
 </ul>
 <!-- omit in toc -->
-<h3 id="docker-コンテナをまとめて停止">▼docker コンテナをまとめて停止</h3>
+<h4 id="デーモンモード">▽デーモンモード</h4>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker-compose up -d</span>
+Starting rdb1  ... done
+Starting ddb   ... done
+Starting cache ... done
+Starting rdb2  ... done
+Starting adminer ... done
+Starting web     ... done
+</div></code></pre>
 <ul>
-<li>xxx</li>
+<li>この方法だと、ログが標準出力に流れない</li>
+<li>制御がすぐに返ってきて、バックエンドでコンテが動作する</li>
+<li>停止したい時は docker-compose down を使用する必要がある</li>
 </ul>
 <!-- omit in toc -->
-<h3 id="docker-コンテナの一部を停止">▼docker コンテナの一部を停止</h3>
-<ul>
-<li>xxx</li>
-</ul>
+<h3 id="一部のサービスdockerコンテナを起動">▼一部のサービス（docker　コンテナ）を起動</h3>
 <!-- omit in toc -->
-<h3 id="docker-コンテナの一部を起動">▼docker コンテナの一部を起動</h3>
-<ul>
-<li>xxx</li>
-</ul>
+<h4 id="非デーモンモード-1">▽非デーモンモード</h4>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker-compose up (サービス名)</span>
+</div></code></pre>
+<!-- omit in toc -->
+<h4 id="デーモンモード-1">▽デーモンモード</h4>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker-compose up -d (サービス名)</span>
+</div></code></pre>
+<!-- omit in toc -->
+<h3 id="サービスdockerコンテナをまとめて停止">▼サービス（docker　コンテナ）をまとめて停止</h3>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker-compose down</span>
+Stopping web     ... done
+Stopping adminer ... done
+Stopping ddb     ... done
+Stopping cache   ... done
+Stopping rdb1    ... done
+Stopping rdb2    ... done
+Removing web     ... done
+Removing adminer ... done
+Removing ddb     ... done
+Removing cache   ... done
+Removing rdb1    ... done
+Removing rdb2    ... done
+Removing network docker_default
+</div></code></pre>
+<!-- omit in toc -->
+<h3 id="一部のサービスdockerコンテナを停止">▼一部のサービス（docker　コンテナ）を停止</h3>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker-compose down (サービス名)</span>
+</div></code></pre>
+<!-- omit in toc -->
+<h3 id="サービスdockerコンテナをまとめて強制終了">▼サービス（docker　コンテナ）をまとめて強制終了</h3>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker-compose <span class="hljs-built_in">kill</span></span>
+</div></code></pre>
+<!-- omit in toc -->
+<h3 id="一部のサービスdockerコンテナを強制終了">▼一部のサービス（docker　コンテナ）を強制終了</h3>
+<pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker-compose <span class="hljs-built_in">kill</span> (サービス名)</span>
+</div></code></pre>
 <hr>
 <h2 id="シェルスクリプトによる-docker-プロビジョニングを行う場合">■シェルスクリプトによる Docker プロビジョニングを行う場合</h2>
 <!-- omit in toc -->
@@ -488,10 +654,14 @@ Engine:
 <li><a href="https://github.com/gakimaru-on-connext/testansible#ansible-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E5%AE%9F%E8%A1%8C">testansible</a> 参照</li>
 </ul>
 <hr>
-<h2 id="docker-操作方法２">■Docker 操作方法（２）</h2>
+<h2 id="セキュアなdocker-操作方法">■セキュアな　Docker 操作方法</h2>
 <ul>
 <li>シェルスクリプトまたは Ansible による Docker プロビジョニングを行った場合の Docker 操作方法</li>
-<li>これらのセットアップでは、Docker サーバーにSSL通信でアクセスするように構成している</li>
+<li>これらのセットアップでは、Docker サーバーのアクセスにSSL通信を用いるように構成している
+<ul>
+<li>docker-machine コマンドで Docker コンテナホストをセットアップした場合と同様の状態になる</li>
+</ul>
+</li>
 </ul>
 <!-- omit in toc -->
 <h3 id="docker-コマンドの実行方法１vm-にログインして-docker-コマンドを実行-1">▼docker コマンドの実行方法１：VM にログインして docker コマンドを実行</h3>
