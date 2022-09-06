@@ -264,6 +264,13 @@
 <ul>
 <li>
 <p>volumes 設定を使用し、DBデータなどはコンテナホスト側（macOS から見たらゲストの Vagrant VM）のディレクトリをマウントするように設定</p>
+<ul>
+<li>これにより、コンテナを破棄してもデータが消えない</li>
+<li>Vagrant VM を破棄するとデータが消える</li>
+</ul>
+</li>
+<li>
+<p>コンテナホスト側（Vagrant VM 側）のディレクトリ構成</p>
 <pre><code class="language-shell"><div>/opt/
 ├── cache/          # cache コンテナ用
 │   └── redis/      # Redis 用
@@ -281,12 +288,6 @@
     └── nginx/      # nginx 用
         └── (なし)
 </div></code></pre>
-<ul>
-<li>これにより、コンテナを破棄してもデータが消えない</li>
-</ul>
-</li>
-<li>
-<p>Vagrant VM を破棄するとデータが消える</p>
 </li>
 </ul>
 <!-- omit in toc -->
@@ -294,6 +295,9 @@
 <ul>
 <li>
 <p>volumes 設定を使用し、ログはコンテナホスト側（macOS から見たらゲストの Vagrant VM）のディレクトリをマウントするように設定</p>
+</li>
+<li>
+<p>コンテナホスト側（Vagrant VM 側）のディレクトリ構成</p>
 <pre><code class="language-shell"><div>/opt/
 ├── cache/          # cache コンテナ用
 │   └── redis/      # Redis 用
