@@ -707,7 +707,8 @@ testdocker/
 ```
 
 <!-- omit in toc -->
-### ▼シェルスクリプトによる OS ＆ Docker セットアップを行う場合
+### ▼シェルスクリプトによる OS ＆ Docker プロビジョニングを行う場合
+
 ```shell
 testdocker/
 ├── README.html
@@ -743,7 +744,8 @@ testdocker/
 ```
 
 <!-- omit in toc -->
-### ▼Ansible による OS ＆ Docker セットアップを行う場合に使用するファイル
+### ▼Ansible による OS ＆ Docker プロビジョニングを行う場合
+
 ```shell
 testdocker/
 ├── README.html
