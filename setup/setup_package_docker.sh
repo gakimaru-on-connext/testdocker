@@ -9,7 +9,7 @@ dnf -y install docker-ce --allowerasing
 usermod -aG docker vagrant
 
 # for server
-PEM_SRC=/vagrant/setup/config/docker/ca
+PEM_SRC=/vagrant/docker/ca
 PEM_DST=/opt/docker/cert
 mkdir -p $PEM_DST
 chmod 500 $PEM_DST
@@ -23,7 +23,7 @@ chmod 400 $PEM_DST/ca.pem \
 ls -lat $PEM_DST
 
 # for client
-# PEM_SRC=/vagrant/setup/config/docker/ca
+# PEM_SRC=/vagrant/docker/ca
 # PEM_DST=/opt/docker/cert
 # mkdir -p $PEM_DST
 # chmod 555 $PEM_DST
@@ -61,9 +61,9 @@ firewall-cmd --reload
 # $ brew install docker   ※注）cask ではない（cask は Docker Desktop）
 # $ brew install docker-compose
 # $ mkdir -p ~/.docker/testdocker
-# $ cp setup/config/docker/ca/ca.pem ~/.docker/testdocker/.
-# $ cp setup/config/docker/ca/client-cert.pem ~/.docker/testdocker/cert.pem
-# $ cp setup/config/docker/ca/client-key.pem ~/.docker/testdocker/key.pem
+# $ cp docker/ca/ca.pem ~/.docker/testdocker/.
+# $ cp docker/ca/client-cert.pem ~/.docker/testdocker/cert.pem
+# $ cp docker/ca/client-key.pem ~/.docker/testdocker/key.pem
 # $ export DOCKER_TLS_VERIFY="1"
 # $ export DOCKER_HOST="tcp://192.168.56.10:2376"
 # $ export DOCKER_CERT_PATH="$HOME/.docker/testdocker"

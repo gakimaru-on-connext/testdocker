@@ -154,7 +154,12 @@
 <hr>
 <h2 id="セットアップ内容">■セットアップ内容</h2>
 <ul>
-<li><a href="https://github.com/gakimaru-on-connext/testvagrant#%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97%E5%86%85%E5%AE%B9">testvagrant</a> と同じ</li>
+<li><a href="https://github.com/gakimaru-on-connext/testvagrant#%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97%E5%86%85%E5%AE%B9">testvagrant</a> とほぼ同じ</li>
+<li>OS は Rocky Linux 9 もしくは Ubuntu 22.04
+<ul>
+<li>コミットしている状態では Ubuntu 22.04</li>
+</ul>
+</li>
 </ul>
 <hr>
 <h2 id="各サーバーへのアクセス方法">■各サーバーへのアクセス方法</h2>
@@ -225,7 +230,7 @@
 </ul>
 </li>
 <li>
-<p>Docker Compose 設定および Docker コンテナ用設定ファイルの共有設定</p>
+<p>Docker 関係ファイルの共有設定</p>
 <pre><code class="language-ruby"><div>config.vm.synced_folder <span class="hljs-string">&quot;../docker&quot;</span>, <span class="hljs-string">&quot;/vagrant/docker&quot;</span>, <span class="hljs-symbol">type:</span> <span class="hljs-string">&quot;rsync&quot;</span>
 </div></code></pre>
 </li>
@@ -678,7 +683,7 @@ Removing network docker_default
 <pre><code class="language-shell"><div><span class="hljs-meta">#</span><span class="bash"> クライアント用の証明書ファイルをコピー</span>
 <span class="hljs-meta">$</span><span class="bash"> CEERT_DST=<span class="hljs-variable">$HOME</span>/.docker/testdocker</span>
 <span class="hljs-meta">$</span><span class="bash"> mkdir -p <span class="hljs-variable">$CEERT_DST</span></span>
-<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> setup/config/docker/ca</span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> docker/ca</span>
 <span class="hljs-meta">$</span><span class="bash"> cp ca.pem <span class="hljs-variable">$CEERT_DST</span>/.</span>
 <span class="hljs-meta">$</span><span class="bash"> cp client-cert.pem <span class="hljs-variable">$CEERT_DST</span>/cert.pem</span>
 <span class="hljs-meta">$</span><span class="bash"> cp client-key.pem <span class="hljs-variable">$CEERT_DST</span>/key.pem</span>
@@ -730,7 +735,8 @@ Engine:
 │   │       └── html/ 
 │   │           ├── 50x.html
 │   │           └── index.html
-│   └── docker-compose.yml       # Docker Compose コンテナ群設定ファイル
+│   ├── docker-compose.yml       # Docker Compose コンテナ群設定ファイル
+│   └── ca/                      # Docker サーバーSSL通信証明書用（未使用）
 ├── vagrant/                     # vagrant 用
 │   ├── share/                   # vagrant 共有ディレクトリ（未使用）
 │   └── Vagrantfile              # vagrant VM 設定
@@ -743,6 +749,18 @@ Engine:
 ├── README.html
 ├── README.md
 ├── docker/                             # Docker 用
+│   ├── ca/                             # Docker サーバーSSL通信証明書用
+│   │   ├── ca-key.pem
+│   │   ├── ca.pem                      # サーバー側／クライアント側証明書用
+│   │   ├── client-cert.pem             # クライアント側証明書用
+│   │   ├── client-extfile.cnf
+│   │   ├── client-key.pem              # クライアント側証明書用
+│   │   ├── client.csr
+│   │   ├── how2make_cert.txt           # 証明書作成手順
+│   │   ├── server-cert.pem             # サーバー側証明書用
+│   │   ├── server-extfile.cnf
+│   │   ├── server-key.pem              # サーバー側証明書用
+│   │   └── server.csr
 │   ├── web/                            # Docker web コンテナ用
 │   │   └── nginx/                      # Docker web コンテナ：nginx 用
 │   │       ├── conf.d/
@@ -752,20 +770,6 @@ Engine:
 │   │           └── index.html
 │   └── docker-compose.yml              # Docker Compose コンテナ群設定ファイル
 ├── setup/                              # セットアップシェルスクリプト／設定用
-│   ├── config/                         # 各セットアップで使用する設定ファイル
-│   │   └── docker/                     # Docker 設定用
-│   │       ├── ca/                     # Docker コマンド証明書用
-│   │       │   ├── ca-key.pem
-│   │       │   ├── ca.pem              # サーバー側／クライアント側証明書用
-│   │       │   ├── client-cert.pem     # クライアント側証明書用
-│   │       │   ├── client-extfile.cnf
-│   │       │   ├── client-key.pem      # クライアント側証明書用
-│   │       │   ├── client.csr
-│   │       │   ├── server-cert.pem     # サーバー側証明書用
-│   │       │   ├── server-extfile.cnf
-│   │       │   ├── server-key.pem      # サーバー側証明書用
-│   │       │   └── server.csr
-│   │       └── how2make_cert.txt       # 証明書作成手順
 │   ├── setup_os.sh                     # 
 │   └── setup_package_docker.sh         # 
 ├── vagrant/                            # vagrant 用
@@ -850,6 +854,18 @@ Engine:
 │   ├── inventories_verify.sh                     # Ansible インベントリ検証スクリプト
 │   └── provision_(環境名).sh                      # Ansible 実行スクリプト
 ├── docker/                                       # Docker 用
+│   ├── ca/                                       # Docker サーバーSSL通信証明書用
+│   │   ├── ca-key.pem
+│   │   ├── ca.pem                                # サーバー側／クライアント側証明書用
+│   │   ├── client-cert.pem                       # クライアント側証明書用
+│   │   ├── client-extfile.cnf
+│   │   ├── client-key.pem                        # クライアント側証明書用
+│   │   ├── client.csr
+│   │   ├── how2make_cert.txt                     # 証明書作成手順
+│   │   ├── server-cert.pem                       # サーバー側証明書用
+│   │   ├── server-extfile.cnf
+│   │   ├── server-key.pem                        # サーバー側証明書用
+│   │   └── server.csr
 │   ├── web/                                      # Docker web コンテナ用
 │   │   └── nginx/                                # Docker web コンテナ：nginx 用
 │   │       ├── conf.d/
@@ -858,26 +874,10 @@ Engine:
 │   │           ├── 50x.html
 │   │           └── index.html
 │   └── docker-compose.yml                        # Docker Compose コンテナ群設定ファイル
-├── setup/                                        # セットアップシェルスクリプト／設定用
-│   ├── config/                                   # 各セットアップで使用する設定ファイル
-│   │   ├── docker/                               # Docker 設定用
-│   │   │   ├── ca/                               # Docker コマンド証明書用
-│   │   │   │   ├── ca-key.pem
-│   │   │   │   ├── ca.pem                        # サーバー側／クライアント側証明書用
-│   │   │   │   ├── client-cert.pem               # クライアント側証明書用
-│   │   │   │   ├── client-extfile.cnf
-│   │   │   │   ├── client-key.pem                # クライアント側証明書用
-│   │   │   │   ├── client.csr
-│   │   │   │   ├── server-cert.pem               # サーバー側証明書用
-│   │   │   │   ├── server-extfile.cnf
-│   │   │   │   ├── server-key.pem                # サーバー側証明書用
-│   │   │   │   └── server.csr
-│   │   │   └── how2make_cert.txt                 # 証明書作成手順
-│   │   └── (その他)                               # （使用しない）
-│   └── (その他)                                   # （使用しない）
-└── vagrant/                                      # vagrant 用
-    ├── share/                                    # vagrant 共有ディレクトリ（未使用）
-    └── Vagrantfile                               # vagrant VM 設定
+├── vagrant/                                      # vagrant 用
+│   ├── share/                                    # vagrant 共有ディレクトリ（未使用）
+│   └── Vagrantfile                               # vagrant VM 設定
+└── setup/                                        # セットアップシェルスクリプト用（使用しない）
 </div></code></pre>
 <hr>
 <p>以上</p>

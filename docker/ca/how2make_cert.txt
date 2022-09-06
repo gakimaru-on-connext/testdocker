@@ -2,7 +2,7 @@
 
 # operation for linux
 
-$ cd /vagrant/setup/config/docker
+$ cd /vagrant/docker/ca
 
 $ mkdir -p ca
 $ cd ca
