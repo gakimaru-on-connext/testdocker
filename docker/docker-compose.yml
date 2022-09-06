@@ -17,8 +17,6 @@ services:
     volumes:
       - /opt/rdb1/mariadb/data:/var/lib/mysql:rw
       - /opt/rdb1/mariadb/log:/var/log/mysql:rw
-    #networks:
-    #  - backend
 
   # [rdb2] PostgreSQL
   rdb2:
@@ -32,8 +30,6 @@ services:
     volumes:
       - /opt/rdb2/postgresql/data:/var/lib/postgresql/data:rw
       - /opt/rdb2/postgresql/log:/var/log/postgresql:rw
-    #networks:
-    #  - backend
 
   # [ddb] MongoDB
   ddb:
@@ -44,8 +40,6 @@ services:
     volumes:
       - /opt/ddb/mongodb/data:/data/db:rw
       - /opt/ddb/mongodb/log:/var/log/mongodb:rw
-    #networks:
-    #  - backend
 
   # [cache] Redis
   cache:
@@ -55,8 +49,6 @@ services:
       - "6379:6379"
     volumes:
       - /opt/cache/redis/data:/data:rw
-    #networks:
-    #  - backend
 
   # [web] Nginx
   web:
@@ -74,9 +66,6 @@ services:
       - ./web/nginx/conf.d:/etc/nginx/conf.d:ro
       - ./web/nginx/html:/usr/share/nginx/html:ro
       - /opt/web/nginx/log:/var/log/nginx:rw
-    #networks:
-    #  - frontend
-    #  - backend
 
   # [web-app] Adminer
   adminer:
@@ -90,21 +79,3 @@ services:
       - rdb1
       - rdb2
       - ddb
-    #networks:
-    #  - frontend
-    #  - backend
-
-# ネットワーク
-#networks:
-#  frontend:
-#    driver: bridge
-#    ipam:
-#      driver: default
-#      config:
-#        - subnet: 192.168.10.0/24
-#  backend:
-#    driver: bridge
-#    ipam:
-#      driver: default
-#      config:
-#        - subnet: 192.168.20.0/24
