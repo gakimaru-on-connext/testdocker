@@ -11,8 +11,10 @@
 - [■各サーバーへのアクセス方法](#各サーバーへのアクセス方法)
 - [■解説：Vagrant 設定](#解説vagrant-設定)
 - [■解説：プロビジョニング](#解説プロビジョニング)
-- [■Ansible によるプロビジョニング時の準備](#ansible-によるプロビジョニング時の準備)
-- [■Ansible によるプロビジョニング時の実行](#ansible-によるプロビジョニング時の実行)
+- [■Docker 操作方法](#docker-操作方法)
+- [■Docker Compose 操作方法](#docker-compose-操作方法)
+- [■シェルスクリプトによる Docker プロビジョニングを行う場合](#シェルスクリプトによる-docker-プロビジョニングを行う場合)
+- [■Ansible による Docker プロビジョニングを行う場合](#ansible-による-docker-プロビジョニングを行う場合)
 - [■ディレクトリ構成](#ディレクトリ構成)
 
 ---
@@ -66,7 +68,7 @@
 - [testvagrant](https://github.com/gakimaru-on-connext/testvagrant#%E5%90%84%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%B8%E3%81%AE%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E6%96%B9%E6%B3%95) 参照
 
 <!-- omit in toc -->
-### ▼Admier
+### ▼Adminer
 
 <!-- omit in toc -->
 #### ▽接続
@@ -102,32 +104,181 @@
 ## ■解説：プロビジョニング
 
 <!-- omit in toc -->
-### ▼Docker プロビジョニング設定
+### ▼Vagrant 設定
+
+- Vagrantfile
+
+  - Docker Compose 用プラグインのインストール
+
+    ```ruby
+    install_plugin('vagrant-docker-compose')
+    ```
+
+  - OSイメージ
+
+    ```ruby
+    config.vm.box = "generic/ubuntu2204"
+    ```
+
+    - "generic/rocky9" では、Docker のインストールに対応していなかったため
+    - シェルスクリプトやAnsibleによるセットアップに切り替える場合は、"generic/rocky9" に変更する必要あり
+
+  - Docker Compose 設定および Docker コンテナ用設定ファイルの共有
+
+    ```ruby
+    config.vm.synced_folder "../docker", "/vagrant/docker", type: "rsync"
+    ```
+
+  - プロビジョニング設定：Docker のインストール
+
+    ```ruby
+    config.vm.provision :docker
+    ```
+
+    - :docker は、本来は Docker の操作を行うプロビジョナーだが、ここでは Docker のインストールにしか使用しないため、設定内容はこれだけ
+
+  - プロビジョニング設定：Docker Compose の実行
+
+    ```ruby
+    config.vm.provision :docker_compose, yml: "/vagrant/docker/docker-compose.yml", run: "always"
+    ```
+
+    - run: "always" を指定し、2回目以降の Vagrant の起動でも Docker Compose が実行されるようにする
+
+<!-- omit in toc -->
+### ▼Docker Compose 設定
+
+- docker/docker-compose.yml に各コンテナの設定を記述
+- 
+
+---
+## ■Docker 操作方法
+
+<!-- omit in toc -->
+### ▼docker コマンドの実行方法１：VM にログインして docker コマンドを実行
 
 - xxx
 
 <!-- omit in toc -->
-### ▼Docker Compose プロビジョニング設定
+### ▼docker コマンドの実行方法2：macOS から　docker コマンドを実行(1)
+
+- xxx
+```shell
+$ cd vagrant
+$ vagrant ssh
+$ cd /usr/lib/systemd/system
+$ sudo vi docker.service
+ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+  ↓ 「--tls=false -H tcp://0.0.0.0:2375」を追加
+ExecStart=/usr/bin/dockerd -H fd:// --tls=false -H tcp://0.0.0.0:2375 --containerd=/run/containerd/containerd.sock
+$ sudo systemctl daemon-reload
+$ sudo systemctl restart docker
+```
+
+```shell
+unset DOCKER_TLS_VERIFY
+unset DOCKER_CERT_PATH
+export DOCKER_HOST=tcp://192.168.56.10:2375
+export DOCKER_MACHINE_NAME=testdocker
+```
+
+<!-- omit in toc -->
+### ▼docker コマンドの実行方法3：macOS から　docker コマンドを実行(2)
+
+- シェルスクリプトまたは Ansible から Docker をセットアップ
+- Docker 接続用の証明書をコピー
+
+  ```shell
+  $ mkdir ~/.docker/testdocker
+  $ cp setup/config/docker/ca/ca.pem $HOME/.docker/testdocker/.
+  $ cp setup/config/docker/ca/client-cert.pem $HOME/.docker/testdocker/cert.pem
+  $ cp setup/config/docker/ca/client-key.pem $HOME/.docker/testdocker/key.pem
+  ```
+
+- 環境変数を設定
+
+  ```shell
+  $ export DOCKER_TLS_VERIFY="1"
+  $ export DOCKER_HOST="tcp://192.168.56.10:2376"
+  $ export DOCKER_CERT_PATH="$HOME/.docker/testdocker"
+  $ export DOCKER_MACHINE_NAME="testdocker"
+  ```
+
+<!-- omit in toc -->
+### ▼docker コンテナにログイン
 
 - xxx
 
 <!-- omit in toc -->
-### ▼シェルスクリプトによるプロビジョニングの場合
+### ▼docker コンテナの確認
 
+- xxx
+
+<!-- omit in toc -->
+### ▼docker コンテナの停止（kill）
+
+- xxx
+
+<!-- omit in toc -->
+### ▼docker コンテナイメージの破棄
+
+- xxx
+
+---
+## ■Docker Compose 操作方法
+
+<!-- omit in toc -->
+### ▼docker コマンドの実行方法：VM にログインして docker-compose コマンドを実行
+
+- xxx
+
+<!-- omit in toc -->
+### ▼docker コンテナをまとめて起動（非デーモンモード）
+
+- xxx
+
+<!-- omit in toc -->
+### ▼docker コンテナをまとめて起動（デーモンモード）
+
+- xxx
+
+<!-- omit in toc -->
+### ▼docker コンテナをまとめて停止
+
+- xxx
+
+<!-- omit in toc -->
+### ▼docker コンテナの一部を停止
+
+- xxx
+
+<!-- omit in toc -->
+### ▼docker コンテナの一部を起動
+
+- xxx
+
+---
+## ■シェルスクリプトによる Docker プロビジョニングを行う場合
+
+<!-- omit in toc -->
+### ▼Vagrant プロビジョニング設定
 - [testvagrant](https://github.com/gakimaru-on-connext/testvagrant#%E8%A7%A3%E8%AA%AC%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0) 参照
 
+---
+## ■Ansible による Docker プロビジョニングを行う場合
+
 <!-- omit in toc -->
-### ▼Ansible によるプロビジョニングの場合
+### ▼Vagrant プロビジョニング設定
 
 - [testansible](https://github.com/gakimaru-on-connext/testansible#%E8%A7%A3%E8%AA%AC%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0) 参照
 
----
-## ■Ansible によるプロビジョニング時の準備
+<!-- omit in toc -->
+### ▼準備
 
 - [testansible](https://github.com/gakimaru-on-connext/testansible#ansible-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E6%BA%96%E5%82%99) 参照
 
----
-## ■Ansible によるプロビジョニング時の実行
+<!-- omit in toc -->
+### ▼実行
 
 - [testansible](https://github.com/gakimaru-on-connext/testansible#ansible-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E5%AE%9F%E8%A1%8C) 参照
 

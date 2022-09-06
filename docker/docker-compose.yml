@@ -1,5 +1,8 @@
 version: "3"
+
+# コンテナ
 services:
+  # [rdb1] MariaDB
   rdb1:
     image: mariadb/server:latest
     container_name: rdb1
@@ -16,6 +19,8 @@ services:
       - /opt/rdb1/mysql/log:/var/log/mysql:rw
     #networks:
     #  - backend
+
+  # [rdb2] PostgreSQL
   rdb2:
     image: postgres:latest
     container_name: rdb2
@@ -29,6 +34,8 @@ services:
       - /opt/rdb2/postgresql/log:/var/log/postgresql:rw
     #networks:
     #  - backend
+
+  # [ddb] MongoDB
   ddb:
     image: mongo:latest
     container_name: ddb
@@ -39,6 +46,8 @@ services:
       - /opt/ddb/mongodb/log:/var/log/mongodb:rw
     #networks:
     #  - backend
+
+  # [cache] Redis
   cache:
     image: redis:latest
     container_name: cache
@@ -48,6 +57,8 @@ services:
       - /opt/cache/redis/data:/data:rw
     #networks:
     #  - backend
+
+  # [web] Nginx
   web:
     image: nginx:latest
     container_name: web
@@ -66,6 +77,8 @@ services:
     #networks:
     #  - frontend
     #  - backend
+
+  # [web-app] Adminer
   adminer:
     container_name: adminer
     hostname: adminer
@@ -80,6 +93,8 @@ services:
     #networks:
     #  - frontend
     #  - backend
+
+# ネットワーク
 #networks:
 #  frontend:
 #    driver: bridge
