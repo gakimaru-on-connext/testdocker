@@ -20,7 +20,7 @@ dnf -y install expect
 dnf -y install langpacks-ja
 
 # Set hostname
-hostnamectl set-hostname testvagrant.localdomain
+hostnamectl set-hostname testdocker.localdomain
 
 # Set locale
 localectl set-locale LANG=ja_JP.UTF-8
