@@ -24,8 +24,9 @@ Vagrant.configure("2") do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
   #config.vm.box = "base"
-  config.vm.box = "generic/ubuntu2204"
+  config.vm.box = "ailispaw/barge"
   #config.vm.box = "generic/rocky9"
+  #config.vm.box = "generic/ubuntu2204"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -51,7 +52,7 @@ Vagrant.configure("2") do |config|
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   # config.vm.network "private_network", ip: "192.168.33.10"
-  config.vm.network "private_network", ip: "192.168.56.10"
+  config.vm.network "private_network", ip: "192.168.56.20"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -63,7 +64,10 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "./data", "/vagrant_data"
-  config.vm.synced_folder "../docker", "/vagrant/docker", type: "rsync"
+  config.vm.synced_folder "../docker", "/vagrant/docker", type: "rsync",
+    rsync__args: ["-avh", "--delete", "--progress"],
+    owner: "bargee",
+    group: "bargees" 
   #config.vm.synced_folder "../setup/config", "/vagrant/setup/config", type: "rsync"
   #config.vm.synced_folder "./share", "/vagrant/share"
   #config.vm.synced_folder "/System/Volumes/Data" + File.expand_path("./share"), "/vagrant/share", type: "nfs", nfs_export: true, nfs_udp: false, nfs_version: 3
@@ -105,9 +109,11 @@ Vagrant.configure("2") do |config|
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
+  # [初回起動時のみ] シェルスクリプトで OS と Docker をセットアップする場合
   #setup_dir = "../setup"
   #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup_os.sh", reboot: true
   #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup_package_docker.sh"
+  # [初回起動時のみ] Ansible で OS と Docker をセットアップする場合
   #config.vm.provision :ansible do |ansible|
   #  playbook_dir = "../ansible/playbook"
   #  ansible.config_file = playbook_dir + "/ansible.cfg"
@@ -118,7 +124,28 @@ Vagrant.configure("2") do |config|
   #  #ansible.tags = "tag1,tag2,..."
   #  #ansible.tags = "os,docker"
   #end
-  config.vm.provision :docker
+  # [初回起動時のみ] Vagrant に任せて と Docker をセットアップする場合（barge を使う場合は不要）
+  #config.vm.provision :docker
+  # [初回起動時のみ] barge を使う場合：barge 向けの OS セットアップと docker-compose のインストール
+  config.vm.provision :shell, privileged: true, inline: <<-SHELL
+    #pkg install locales
+    #pkg install vim
+    #pkg install tmux
+    #pkg install git -e BR2_PACKAGE_OPENSSL=y -e BR2_PACKAGE_LIBCURL=y
+    #echo "LANG=ja_JP.UTF-8" > /etc/locale.conf
+    #sudo localedef -i ja_JP -f UTF-8 ja_JP.UTF-8
+    #git config --global http.sslCAinfo /etc/ssl/certs/ca-certificates.crt
+    #if [ ! -f /opt/bin/docker-compose ]; then
+    #  sudo wget -qO /opt/bin/docker-compose "https://github.com/docker/compose/releases/download/1.10.0/docker-compose-$(uname -s)-$(uname -m)"
+    #  sudo chmod +x /opt/bin/docker-compose
+    #fi
+    # Docker を最新バージョンに更新
+    sudo /etc/init.d/docker restart latest
+  SHELL
+  # [初回起動時のみ] セットアップ後に一度VMを再起動したい場合
   #config.vm.provision :reload
-  config.vm.provision :docker_compose, yml: "/vagrant/docker/docker-compose.yml", run: "always"
+  # Docker Compose 実行（初回起動時に限らず常に実行）
+  config.vm.provision :docker_compose, yml: "/vagrant/docker/docker-compose.yml", run: "always",
+    executable_install_path: "/usr/bin/docker-compose",
+    executable_symlink_path: "/opt/bin/docker-compose"
 end
