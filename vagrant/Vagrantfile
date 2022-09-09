@@ -113,7 +113,7 @@ Vagrant.configure("2") do |config|
   # [初回起動時のみ実行] barge を使う場合：barge 向けの OS セットアップと docker-compose のインストール
   config.vm.provision :shell, privileged: true, inline: <<-SHELL
     # Docker を最新バージョンに更新
-    sudo /etc/init.d/docker restart latest
+    /etc/init.d/docker restart latest
   SHELL
   # [初回起動時のみ実行] Vagrant に任せて と Docker をセットアップする場合（barge を使う場合は不要／Rocky Linux 9 では使用不可／Ubuntu 22.04 では使用可）
   #config.vm.provision :docker
