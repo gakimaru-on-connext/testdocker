@@ -66,6 +66,7 @@ Vagrant.configure("2") do |config|
   # config.vm.synced_folder "./data", "/vagrant_data"
   config.vm.synced_folder "../docker", "/vagrant/docker", type: "rsync",
     rsync__args: ["-avh", "--delete", "--progress"],
+    # barge 専用設定
     owner: "bargee",
     group: "bargees" 
   #config.vm.synced_folder "../setup/config", "/vagrant/setup/config", type: "rsync"
@@ -109,11 +110,11 @@ Vagrant.configure("2") do |config|
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
-  # [初回起動時のみ] シェルスクリプトで OS と Docker をセットアップする場合
+  # [初回起動時のみ実行] シェルスクリプトで OS と Docker をセットアップする場合
   #setup_dir = "../setup"
   #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup_os.sh", reboot: true
   #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup_package_docker.sh"
-  # [初回起動時のみ] Ansible で OS と Docker をセットアップする場合
+  # [初回起動時のみ実行] Ansible で OS と Docker をセットアップする場合
   #config.vm.provision :ansible do |ansible|
   #  playbook_dir = "../ansible/playbook"
   #  ansible.config_file = playbook_dir + "/ansible.cfg"
@@ -124,9 +125,9 @@ Vagrant.configure("2") do |config|
   #  #ansible.tags = "tag1,tag2,..."
   #  #ansible.tags = "os,docker"
   #end
-  # [初回起動時のみ] Vagrant に任せて と Docker をセットアップする場合（barge を使う場合は不要）
+  # [初回起動時のみ実行] Vagrant に任せて と Docker をセットアップする場合（barge を使う場合は不要）
   #config.vm.provision :docker
-  # [初回起動時のみ] barge を使う場合：barge 向けの OS セットアップと docker-compose のインストール
+  # [初回起動時のみ実行] barge を使う場合：barge 向けの OS セットアップと docker-compose のインストール
   config.vm.provision :shell, privileged: true, inline: <<-SHELL
     #pkg install locales
     #pkg install vim
@@ -142,9 +143,9 @@ Vagrant.configure("2") do |config|
     # Docker を最新バージョンに更新
     sudo /etc/init.d/docker restart latest
   SHELL
-  # [初回起動時のみ] セットアップ後に一度VMを再起動したい場合
+  # [初回起動時のみ実行] セットアップ後に一度VMを再起動したい場合
   #config.vm.provision :reload
-  # Docker Compose 実行（初回起動時に限らず常に実行）
+  # [毎回起動時に実行] Docker Compose 実行
   config.vm.provision :docker_compose, yml: "/vagrant/docker/docker-compose.yml", run: "always",
     executable_install_path: "/usr/bin/docker-compose",
     executable_symlink_path: "/opt/bin/docker-compose"
