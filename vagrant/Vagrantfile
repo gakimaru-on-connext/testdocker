@@ -136,6 +136,7 @@ Vagrant.configure("2") do |config|
   #config.vm.provision :reload
   # [毎回起動時に実行] Docker Compose 実行
   config.vm.provision :docker_compose, yml: "/vagrant/docker/docker-compose.yml", run: "always",
+    compose_version: "1.29.2",#2.x系は現状指定不可
     executable_install_path: "/usr/bin/docker-compose",
     executable_symlink_path: "/opt/bin/docker-compose"
 end
