@@ -13,8 +13,8 @@
 - [■解説：プロビジョニング](#解説プロビジョニング)
 - [■Docker 操作方法](#docker-操作方法)
 - [■Docker Compose 操作方法](#docker-compose-操作方法)
-- [■シェルスクリプトによる Docker プロビジョニングを行う場合](#シェルスクリプトによる-docker-プロビジョニングを行う場合)
-- [■Ansible による Docker プロビジョニングを行う場合](#ansible-による-docker-プロビジョニングを行う場合)
+- [■シェルスクリプトで Docker をインストールする場合](#シェルスクリプトで-docker-をインストールする場合)
+- [■Ansible で Docker をインストールする場合](#ansible-で-docker-をインストールする場合)
 - [■セキュアな Docker 操作方法](#セキュアな-docker-操作方法)
 - [■ディレクトリ構成](#ディレクトリ構成)
 
@@ -70,14 +70,18 @@
 
 - [testvagrant](https://github.com/gakimaru-on-connext/testvagrant#%E5%90%84%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%B8%E3%81%AE%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E6%96%B9%E6%B3%95) 参照
 
+- アクセス先のアドレスは 192.168.56.10 から 192.168.56.20 に変更する必要あり
+
 <!-- omit in toc -->
 ### ▼Adminer
+
+- testvagrant, testansible では扱っていないサーバー
+- 各種DBシステムを操作するサーバーシステム
 
 <!-- omit in toc -->
 #### ▽接続
 
 - Webブラウザから http://192.168.56.10:8080 にアクセス
-- 各種DBシステムを操作するサーバーシステム
 - MariaDB に接続する場合：
   - データベース種類：MySQL
   - サーバ：rdb1
@@ -117,14 +121,15 @@
     install_plugin('vagrant-docker-compose')
     ```
 
-  - OSイメージ設定：ubuntu22.04
+  - OSイメージ設定：barge
 
     ```ruby
-    config.vm.box = "generic/ubuntu2204"
+    config.vm.box = "barge"
     ```
 
-    - "generic/rocky9" では、Vagrant による Docker のインストールに対応していなかったため ubuntu2204 を使用
-    - シェルスクリプトやAnsibleによるセットアップに切り替える場合は、"generic/rocky9" に変更する必要あり
+  -  barge は、Docker コンテナホスト用にカスタマイズされた軽量Linux
+        -  [https://github.com/bargees/barge-os](https://github.com/bargees/barge-os)
+  - シェルスクリプトやAnsibleによるセットアップでは、"generic/rocky9" を対象としているため、box の指定を書き換える必要あり
 
   - Docker 関係ファイルの共有設定
 
@@ -592,23 +597,119 @@ $ docker-compose kill (サービス名)
 ```
 
 ---
-## ■シェルスクリプトによる Docker プロビジョニングを行う場合
+## ■シェルスクリプトで Docker をインストールする場合
 
 - Docker 自体のインストールとセットアップを Vagrant の docker プロビジョナーに任せず、独自に実施する方法
 
 <!-- omit in toc -->
 ### ▼Vagrant プロビジョニング設定
-- [testvagrant](https://github.com/gakimaru-on-connext/testvagrant#%E8%A7%A3%E8%AA%AC%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0) 参照
+
+- Vagrantfile の下記の箇所を書き換えてからプロビジョニングする
+
+  - VM の指定を Rocky Linux 9 に変更
+
+    ```ruby
+    # ↓ ailispaw/barge をコメントアウト
+    #config.vm.box = "ailispaw/barge"
+    # ↓ generic/rocky9 を有効化
+    config.vm.box = "generic/rocky9"
+    ```
+
+  - synced_folder の barge 専用設定をコメントアウト
+
+    ```ruby
+    config.vm.synced_folder "../docker", "/vagrant/docker", type: "rsync",
+      # ↓末尾の「,」を削除
+      rsync__args: ["-avh", "--delete", "--progress"] #,
+      # ↓コメントアウトする
+      # # barge 専用設定
+      # owner: "bargee",
+      # group: "bargees" 
+    ```
+
+  - barge 専用の provision 設定をコメントアウト
+
+    ```ruby
+    # [初回起動時のみ実行] barge を使う場合：barge 向けの OS セットアップと docker-compose のインストール
+    # ↓ コメントアウト
+    # config.vm.provision :shell, privileged: true, inline: <<-SHELL
+    #   # Docker を最新バージョンに更新
+    #   sudo /etc/init.d/docker restart latest
+    # SHELL
+    ```
+
+  - シェルスクリプトによる Docker インストール用の provision 設定を有効化
+
+    ```ruby
+    # [初回起動時のみ実行] シェルスクリプトで OS と Docker をセットアップする場合
+    # ↓ 有効化（コメントアウト状態を解除）
+    setup_dir = "../setup"
+    config.vm.provision :shell, privileged: true, path: setup_dir + "/setup_os.sh", reboot: true
+    config.vm.provision :shell, privileged: true, path: setup_dir + "/setup_package_docker.sh"
+    ```
+
+- 内容については　[testvagrant](https://github.com/gakimaru-on-connext/testvagrant#%E8%A7%A3%E8%AA%AC%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0) 参照
 
 ---
-## ■Ansible による Docker プロビジョニングを行う場合
+## ■Ansible で Docker をインストールする場合
 
 - Docker 自体のインストールとセットアップを Vagrant の docker プロビジョナーに任せず、独自に実施する方法
 
 <!-- omit in toc -->
 ### ▼Vagrant プロビジョニング設定
 
-- [testansible](https://github.com/gakimaru-on-connext/testansible#%E8%A7%A3%E8%AA%AC%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0) 参照
+- Vagrantfile の下記の箇所を書き換えてからプロビジョニングする
+
+  - VM の指定を Rocky Linux 9 に変更
+
+    ```ruby
+    # ↓ ailispaw/barge をコメントアウト
+    #config.vm.box = "ailispaw/barge"
+    # ↓ generic/rocky9 を有効化
+    config.vm.box = "generic/rocky9"
+    ```
+
+  - synced_folder の barge 専用設定をコメントアウト
+
+    ```ruby
+    config.vm.synced_folder "../docker", "/vagrant/docker", type: "rsync",
+      # ↓末尾の「,」を削除
+      rsync__args: ["-avh", "--delete", "--progress"] #,
+      # ↓コメントアウトする
+      # # barge 専用設定
+      # owner: "bargee",
+      # group: "bargees" 
+    ```
+
+  - barge 専用の provision 設定をコメントアウト
+
+    ```ruby
+    # [初回起動時のみ実行] barge を使う場合：barge 向けの OS セットアップと docker-compose のインストール
+    # ↓ コメントアウト
+    # config.vm.provision :shell, privileged: true, inline: <<-SHELL
+    #   # Docker を最新バージョンに更新
+    #   sudo /etc/init.d/docker restart latest
+    # SHELL
+    ```
+
+  - シェルスクリプトによる Docker インストール用の provision 設定を有効化
+
+    ```ruby
+    # [初回起動時のみ実行] Ansible で OS と Docker をセットアップする場合
+    # ↓ 有効化（コメントアウト状態を解除）
+    config.vm.provision :ansible do |ansible|
+      playbook_dir = "../ansible/playbook"
+      ansible.config_file = playbook_dir + "/ansible.cfg"
+      ansible.playbook = playbook_dir + "/site_all_setup.yml"
+      ansible.inventory_path = playbook_dir + "/inventories/vagrant_hosts.yml"
+      ansible.limit = 'all'
+      #ansible.verbose = "vvv"
+      #ansible.tags = "tag1,tag2,..."
+      #ansible.tags = "os,docker"
+    end
+    ```
+
+- 内容については　[testansible](https://github.com/gakimaru-on-connext/testansible#%E8%A7%A3%E8%AA%AC%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0) 参照
 
 <!-- omit in toc -->
 ### ▼Ansible プロビジョニング準備

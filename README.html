@@ -94,8 +94,8 @@
 <li><a href="#%E8%A7%A3%E8%AA%AC%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0">■解説：プロビジョニング</a></li>
 <li><a href="#docker-%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">■Docker 操作方法</a></li>
 <li><a href="#docker-compose-%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">■Docker Compose 操作方法</a></li>
-<li><a href="#%E3%82%B7%E3%82%A7%E3%83%AB%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%81%AB%E3%82%88%E3%82%8B-docker-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%92%E8%A1%8C%E3%81%86%E5%A0%B4%E5%90%88">■シェルスクリプトによる Docker プロビジョニングを行う場合</a></li>
-<li><a href="#ansible-%E3%81%AB%E3%82%88%E3%82%8B-docker-%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%92%E8%A1%8C%E3%81%86%E5%A0%B4%E5%90%88">■Ansible による Docker プロビジョニングを行う場合</a></li>
+<li><a href="#%E3%82%B7%E3%82%A7%E3%83%AB%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%97%E3%83%88%E3%81%A7-docker-%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B%E5%A0%B4%E5%90%88">■シェルスクリプトで Docker をインストールする場合</a></li>
+<li><a href="#ansible-%E3%81%A7-docker-%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B%E5%A0%B4%E5%90%88">■Ansible で Docker をインストールする場合</a></li>
 <li><a href="#%E3%82%BB%E3%82%AD%E3%83%A5%E3%82%A2%E3%81%AA-docker-%E6%93%8D%E4%BD%9C%E6%96%B9%E6%B3%95">■セキュアな Docker 操作方法</a></li>
 <li><a href="#%E3%83%87%E3%82%A3%E3%83%AC%E3%82%AF%E3%83%88%E3%83%AA%E6%A7%8B%E6%88%90">■ディレクトリ構成</a></li>
 </ul>
@@ -164,15 +164,23 @@
 <hr>
 <h2 id="各サーバーへのアクセス方法">■各サーバーへのアクセス方法</h2>
 <ul>
-<li><a href="https://github.com/gakimaru-on-connext/testvagrant#%E5%90%84%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%B8%E3%81%AE%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E6%96%B9%E6%B3%95">testvagrant</a> 参照</li>
+<li>
+<p><a href="https://github.com/gakimaru-on-connext/testvagrant#%E5%90%84%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E3%81%B8%E3%81%AE%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E6%96%B9%E6%B3%95">testvagrant</a> 参照</p>
+</li>
+<li>
+<p>アクセス先のアドレスは 192.168.56.10 から 192.168.56.20 に変更する必要あり</p>
+</li>
 </ul>
 <!-- omit in toc -->
 <h3 id="adminer">▼Adminer</h3>
+<ul>
+<li>testvagrant, testansible では扱っていないサーバー</li>
+<li>各種DBシステムを操作するサーバーシステム</li>
+</ul>
 <!-- omit in toc -->
 <h4 id="接続">▽接続</h4>
 <ul>
 <li>Webブラウザから <a href="http://192.168.56.10:8080">http://192.168.56.10:8080</a> にアクセス</li>
-<li>各種DBシステムを操作するサーバーシステム</li>
 <li>MariaDB に接続する場合：
 <ul>
 <li>データベース種類：MySQL</li>
@@ -221,13 +229,18 @@
 </div></code></pre>
 </li>
 <li>
-<p>OSイメージ設定：ubuntu22.04</p>
-<pre><code class="language-ruby"><div>config.vm.box = <span class="hljs-string">&quot;generic/ubuntu2204&quot;</span>
+<p>OSイメージ設定：barge</p>
+<pre><code class="language-ruby"><div>config.vm.box = <span class="hljs-string">&quot;barge&quot;</span>
 </div></code></pre>
+</li>
+<li>
+<p>barge は、Docker コンテナホスト用にカスタマイズされた軽量Linux</p>
 <ul>
-<li>&quot;generic/rocky9&quot; では、Vagrant による Docker のインストールに対応していなかったため ubuntu2204 を使用</li>
-<li>シェルスクリプトやAnsibleによるセットアップに切り替える場合は、&quot;generic/rocky9&quot; に変更する必要あり</li>
+<li><a href="https://github.com/bargees/barge-os">https://github.com/bargees/barge-os</a></li>
 </ul>
+</li>
+<li>
+<p>シェルスクリプトやAnsibleによるセットアップでは、&quot;generic/rocky9&quot; を対象としているため、box の指定を書き換える必要あり</p>
 </li>
 <li>
 <p>Docker 関係ファイルの共有設定</p>
@@ -639,24 +652,121 @@ Removing network docker_default
 <pre><code class="language-shell"><div><span class="hljs-meta">$</span><span class="bash"> docker-compose <span class="hljs-built_in">kill</span> (サービス名)</span>
 </div></code></pre>
 <hr>
-<h2 id="シェルスクリプトによる-docker-プロビジョニングを行う場合">■シェルスクリプトによる Docker プロビジョニングを行う場合</h2>
+<h2 id="シェルスクリプトで-docker-をインストールする場合">■シェルスクリプトで Docker をインストールする場合</h2>
 <ul>
 <li>Docker 自体のインストールとセットアップを Vagrant の docker プロビジョナーに任せず、独自に実施する方法</li>
 </ul>
 <!-- omit in toc -->
 <h3 id="vagrant-プロビジョニング設定">▼Vagrant プロビジョニング設定</h3>
 <ul>
-<li><a href="https://github.com/gakimaru-on-connext/testvagrant#%E8%A7%A3%E8%AA%AC%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0">testvagrant</a> 参照</li>
+<li>
+<p>Vagrantfile の下記の箇所を書き換えてからプロビジョニングする</p>
+<ul>
+<li>
+<p>VM の指定を Rocky Linux 9 に変更</p>
+<pre><code class="language-ruby"><div><span class="hljs-comment"># ↓ ailispaw/barge をコメントアウト</span>
+<span class="hljs-comment">#config.vm.box = &quot;ailispaw/barge&quot;</span>
+<span class="hljs-comment"># ↓ generic/rocky9 を有効化</span>
+config.vm.box = <span class="hljs-string">&quot;generic/rocky9&quot;</span>
+</div></code></pre>
+</li>
+<li>
+<p>synced_folder の barge 専用設定をコメントアウト</p>
+<pre><code class="language-ruby"><div>config.vm.synced_folder <span class="hljs-string">&quot;../docker&quot;</span>, <span class="hljs-string">&quot;/vagrant/docker&quot;</span>, <span class="hljs-symbol">type:</span> <span class="hljs-string">&quot;rsync&quot;</span>,
+  <span class="hljs-comment"># ↓末尾の「,」を削除</span>
+  <span class="hljs-symbol">rsync__args:</span> [<span class="hljs-string">&quot;-avh&quot;</span>, <span class="hljs-string">&quot;--delete&quot;</span>, <span class="hljs-string">&quot;--progress&quot;</span>] <span class="hljs-comment">#,</span>
+  <span class="hljs-comment"># ↓コメントアウトする</span>
+  <span class="hljs-comment"># # barge 専用設定</span>
+  <span class="hljs-comment"># owner: &quot;bargee&quot;,</span>
+  <span class="hljs-comment"># group: &quot;bargees&quot; </span>
+</div></code></pre>
+</li>
+<li>
+<p>barge 専用の provision 設定をコメントアウト</p>
+<pre><code class="language-ruby"><div><span class="hljs-comment"># [初回起動時のみ実行] barge を使う場合：barge 向けの OS セットアップと docker-compose のインストール</span>
+<span class="hljs-comment"># ↓ コメントアウト</span>
+<span class="hljs-comment"># config.vm.provision :shell, privileged: true, inline: &lt;&lt;-SHELL</span>
+<span class="hljs-comment">#   # Docker を最新バージョンに更新</span>
+<span class="hljs-comment">#   sudo /etc/init.d/docker restart latest</span>
+<span class="hljs-comment"># SHELL</span>
+</div></code></pre>
+</li>
+<li>
+<p>シェルスクリプトによる Docker インストール用の provision 設定を有効化</p>
+<pre><code class="language-ruby"><div><span class="hljs-comment"># [初回起動時のみ実行] シェルスクリプトで OS と Docker をセットアップする場合</span>
+<span class="hljs-comment"># ↓ 有効化（コメントアウト状態を解除）</span>
+setup_dir = <span class="hljs-string">&quot;../setup&quot;</span>
+config.vm.provision <span class="hljs-symbol">:shell</span>, <span class="hljs-symbol">privileged:</span> <span class="hljs-literal">true</span>, <span class="hljs-symbol">path:</span> setup_dir + <span class="hljs-string">&quot;/setup_os.sh&quot;</span>, <span class="hljs-symbol">reboot:</span> <span class="hljs-literal">true</span>
+config.vm.provision <span class="hljs-symbol">:shell</span>, <span class="hljs-symbol">privileged:</span> <span class="hljs-literal">true</span>, <span class="hljs-symbol">path:</span> setup_dir + <span class="hljs-string">&quot;/setup_package_docker.sh&quot;</span>
+</div></code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>内容については　<a href="https://github.com/gakimaru-on-connext/testvagrant#%E8%A7%A3%E8%AA%AC%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0">testvagrant</a> 参照</p>
+</li>
 </ul>
 <hr>
-<h2 id="ansible-による-docker-プロビジョニングを行う場合">■Ansible による Docker プロビジョニングを行う場合</h2>
+<h2 id="ansible-で-docker-をインストールする場合">■Ansible で Docker をインストールする場合</h2>
 <ul>
 <li>Docker 自体のインストールとセットアップを Vagrant の docker プロビジョナーに任せず、独自に実施する方法</li>
 </ul>
 <!-- omit in toc -->
 <h3 id="vagrant-プロビジョニング設定-1">▼Vagrant プロビジョニング設定</h3>
 <ul>
-<li><a href="https://github.com/gakimaru-on-connext/testansible#%E8%A7%A3%E8%AA%AC%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0">testansible</a> 参照</li>
+<li>
+<p>Vagrantfile の下記の箇所を書き換えてからプロビジョニングする</p>
+<ul>
+<li>
+<p>VM の指定を Rocky Linux 9 に変更</p>
+<pre><code class="language-ruby"><div><span class="hljs-comment"># ↓ ailispaw/barge をコメントアウト</span>
+<span class="hljs-comment">#config.vm.box = &quot;ailispaw/barge&quot;</span>
+<span class="hljs-comment"># ↓ generic/rocky9 を有効化</span>
+config.vm.box = <span class="hljs-string">&quot;generic/rocky9&quot;</span>
+</div></code></pre>
+</li>
+<li>
+<p>synced_folder の barge 専用設定をコメントアウト</p>
+<pre><code class="language-ruby"><div>config.vm.synced_folder <span class="hljs-string">&quot;../docker&quot;</span>, <span class="hljs-string">&quot;/vagrant/docker&quot;</span>, <span class="hljs-symbol">type:</span> <span class="hljs-string">&quot;rsync&quot;</span>,
+  <span class="hljs-comment"># ↓末尾の「,」を削除</span>
+  <span class="hljs-symbol">rsync__args:</span> [<span class="hljs-string">&quot;-avh&quot;</span>, <span class="hljs-string">&quot;--delete&quot;</span>, <span class="hljs-string">&quot;--progress&quot;</span>] <span class="hljs-comment">#,</span>
+  <span class="hljs-comment"># ↓コメントアウトする</span>
+  <span class="hljs-comment"># # barge 専用設定</span>
+  <span class="hljs-comment"># owner: &quot;bargee&quot;,</span>
+  <span class="hljs-comment"># group: &quot;bargees&quot; </span>
+</div></code></pre>
+</li>
+<li>
+<p>barge 専用の provision 設定をコメントアウト</p>
+<pre><code class="language-ruby"><div><span class="hljs-comment"># [初回起動時のみ実行] barge を使う場合：barge 向けの OS セットアップと docker-compose のインストール</span>
+<span class="hljs-comment"># ↓ コメントアウト</span>
+<span class="hljs-comment"># config.vm.provision :shell, privileged: true, inline: &lt;&lt;-SHELL</span>
+<span class="hljs-comment">#   # Docker を最新バージョンに更新</span>
+<span class="hljs-comment">#   sudo /etc/init.d/docker restart latest</span>
+<span class="hljs-comment"># SHELL</span>
+</div></code></pre>
+</li>
+<li>
+<p>シェルスクリプトによる Docker インストール用の provision 設定を有効化</p>
+<pre><code class="language-ruby"><div><span class="hljs-comment"># [初回起動時のみ実行] Ansible で OS と Docker をセットアップする場合</span>
+<span class="hljs-comment"># ↓ 有効化（コメントアウト状態を解除）</span>
+config.vm.provision <span class="hljs-symbol">:ansible</span> <span class="hljs-keyword">do</span> <span class="hljs-params">|ansible|</span>
+  playbook_dir = <span class="hljs-string">&quot;../ansible/playbook&quot;</span>
+  ansible.config_file = playbook_dir + <span class="hljs-string">&quot;/ansible.cfg&quot;</span>
+  ansible.playbook = playbook_dir + <span class="hljs-string">&quot;/site_all_setup.yml&quot;</span>
+  ansible.inventory_path = playbook_dir + <span class="hljs-string">&quot;/inventories/vagrant_hosts.yml&quot;</span>
+  ansible.limit = <span class="hljs-string">&#x27;all&#x27;</span>
+  <span class="hljs-comment">#ansible.verbose = &quot;vvv&quot;</span>
+  <span class="hljs-comment">#ansible.tags = &quot;tag1,tag2,...&quot;</span>
+  <span class="hljs-comment">#ansible.tags = &quot;os,docker&quot;</span>
+<span class="hljs-keyword">end</span>
+</div></code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>内容については　<a href="https://github.com/gakimaru-on-connext/testansible#%E8%A7%A3%E8%AA%AC%E3%83%97%E3%83%AD%E3%83%93%E3%82%B8%E3%83%A7%E3%83%8B%E3%83%B3%E3%82%B0">testansible</a> 参照</p>
+</li>
 </ul>
 <!-- omit in toc -->
 <h3 id="ansible-プロビジョニング準備">▼Ansible プロビジョニング準備</h3>

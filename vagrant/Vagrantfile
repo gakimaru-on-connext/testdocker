@@ -110,6 +110,13 @@ Vagrant.configure("2") do |config|
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
+  # [初回起動時のみ実行] barge を使う場合：barge 向けの OS セットアップと docker-compose のインストール
+  config.vm.provision :shell, privileged: true, inline: <<-SHELL
+    # Docker を最新バージョンに更新
+    sudo /etc/init.d/docker restart latest
+  SHELL
+  # [初回起動時のみ実行] Vagrant に任せて と Docker をセットアップする場合（barge を使う場合は不要／Rocky Linux 9 では使用不可／Ubuntu 22.04 では使用可）
+  #config.vm.provision :docker
   # [初回起動時のみ実行] シェルスクリプトで OS と Docker をセットアップする場合
   #setup_dir = "../setup"
   #config.vm.provision :shell, privileged: true, path: setup_dir + "/setup_os.sh", reboot: true
@@ -125,24 +132,6 @@ Vagrant.configure("2") do |config|
   #  #ansible.tags = "tag1,tag2,..."
   #  #ansible.tags = "os,docker"
   #end
-  # [初回起動時のみ実行] Vagrant に任せて と Docker をセットアップする場合（barge を使う場合は不要）
-  #config.vm.provision :docker
-  # [初回起動時のみ実行] barge を使う場合：barge 向けの OS セットアップと docker-compose のインストール
-  config.vm.provision :shell, privileged: true, inline: <<-SHELL
-    #pkg install locales
-    #pkg install vim
-    #pkg install tmux
-    #pkg install git -e BR2_PACKAGE_OPENSSL=y -e BR2_PACKAGE_LIBCURL=y
-    #echo "LANG=ja_JP.UTF-8" > /etc/locale.conf
-    #sudo localedef -i ja_JP -f UTF-8 ja_JP.UTF-8
-    #git config --global http.sslCAinfo /etc/ssl/certs/ca-certificates.crt
-    #if [ ! -f /opt/bin/docker-compose ]; then
-    #  sudo wget -qO /opt/bin/docker-compose "https://github.com/docker/compose/releases/download/1.10.0/docker-compose-$(uname -s)-$(uname -m)"
-    #  sudo chmod +x /opt/bin/docker-compose
-    #fi
-    # Docker を最新バージョンに更新
-    sudo /etc/init.d/docker restart latest
-  SHELL
   # [初回起動時のみ実行] セットアップ後に一度VMを再起動したい場合
   #config.vm.provision :reload
   # [毎回起動時に実行] Docker Compose 実行
